@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>北 kanji card</title><style>
+:root { --bg:#eae6f7; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
+        --brand:#261c76; --brand-soft:#eae6f7; --tag:#e5e5e5; --tag-ink:#6b665e; --unrated:#9a948a;
+        --pick:#261c76; --pick-ink:#fff; --shadow:0 4px 24px rgba(26,20,77,.12);
+        --learn-off:#e5e5e5; --learn-off-hover:#d6d6d6; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
+          --brand:#c9c0ff; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
+          --pick:#c9c0ff; --pick-ink:#1a1640; --shadow:0 4px 24px rgba(0,0,0,.4);
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; } }
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
+       font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif; }
+main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
+       display:flex; flex-direction:column; justify-content:center; }
+.card { background:var(--card); border-radius:20px; box-shadow:var(--shadow); padding:24px 20px;
+        height:min(90%, calc(100% - 128px)); overflow-y:auto; overscroll-behavior:contain;
+        display:flex; flex-direction:column; gap:24px; }
+.card > * { flex:none; }
+.icon { display:inline-flex; flex:none; }
+.icon path[stroke] { stroke:var(--brand); }
+.icon path[fill]:not([fill="none"]) { fill:var(--brand); }
+
+.card > header { position:relative; display:flex; align-items:flex-start; gap:16px; padding-bottom:20px; }
+/* "Learned" toggle: top-right corner, centred on the level badge's row */
+.learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
+         border-radius:50%; cursor:pointer; line-height:0; }
+.learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
+.learn:hover .learn-bg { fill:var(--learn-off-hover); }
+.learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
+.learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
+.learn:hover::after, .learn:focus-visible::after { opacity:1; }
+.kanji { font-size:96px; line-height:1; font-weight:500; }
+.info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
+.meaning { font-size:18px; line-height:1.4; font-weight:700; }
+.readings { align-self:stretch; display:flex; flex-direction:column; gap:2px; padding-top:4px; }
+.rrow { display:flex; align-items:baseline; gap:8px; }
+.rl { width:28px; flex:none; font-size:12px; color:var(--brand); }
+.rv { flex:1; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:14px; }
+.rv .ro { font-size:12px; }
+.ro { color:var(--muted); }
+
+.lv { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; line-height:1.5;
+      padding:1px 7px; border-radius:999px; background:var(--tag); color:var(--tag-ink); white-space:nowrap; }
+.lv.unrated { color:var(--unrated); font-weight:500; }
+
+.sections { display:flex; flex-direction:column; gap:16px; }
+details.sec { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+summary { cursor:pointer; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+details.sec > summary { background:var(--brand-soft); padding:10px 14px;
+                        display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.sl { display:flex; align-items:center; gap:8px; }
+.sec-chev { transform:rotate(-90deg); transition:transform .15s; }
+details.sec[open] > summary .sec-chev { transform:none; }
+h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--brand); margin:0; }
+.count { font-size:12px; color:var(--brand); }
+
+.radicals { padding:16px; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.radical { display:flex; align-items:center; gap:16px; padding:8px 16px; border:1px solid var(--line);
+           border-radius:10px; line-height:1.3; }
+.radical .rg { font-size:24px; }
+.radical .rm { font-size:12px; color:var(--muted); }
+
+.vocab { padding:8px 14px; }
+.picker { display:flex; flex-wrap:wrap; gap:6px 4px; padding-bottom:12px; }
+.picker input { position:absolute; opacity:0; pointer-events:none; }
+.picker label { font-size:12.8px; font-weight:700; padding:4px 12px; border-radius:999px; cursor:pointer;
+                border:1px solid var(--line); color:var(--brand); }
+.picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
+.picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
+
+.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;
+        border-bottom:1px solid var(--line); }
+.word:last-of-type { border-bottom:0; }
+.word-head { align-self:stretch; display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
+.lv-wrap { padding-bottom:6px; flex:none; }
+.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; }
+.word-ja rt { font-size:11.2px; font-weight:500; line-height:1.2; }
+.wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
+.word-en { font-size:16px; color:var(--muted); }
+
+details.ph { align-self:stretch; }
+details.ph > summary { display:flex; align-items:center; gap:8px; padding:2px 0; font-size:13.6px; color:var(--muted); }
+details.ph .chev-open { display:none; }
+details.ph[open] .chev-open { display:inline-flex; }
+details.ph[open] .chev-closed { display:none; }
+ul.phrases { list-style:none; margin:4px 0 0; padding:8px 0 8px 12px; border-left:3px solid var(--line);
+             display:flex; flex-direction:column; gap:10px; }
+ul.phrases li { display:flex; flex-direction:column; gap:2px; }
+.ph-row { display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.ph-ja { font-size:16.8px; }
+.ph-en { font-size:14.4px; color:var(--muted); }
+
+.fg { cursor:pointer; border-radius:3px; transition:background .12s; }
+.fg rt { visibility:hidden; font-size:.5em; font-weight:500; color:var(--ink); }
+.fg:hover { background:var(--brand-soft); }
+.fg:hover rt { visibility:visible; }
+
+.play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
+.tts .play { display:inline-flex; }
+.play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.none { color:var(--muted); font-size:14.4px; font-style:italic; margin:6px 0 0; }
+
+.top-row { flex:none; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.progress { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.progress-legend { display:flex; justify-content:space-between; font-size:12px; font-weight:700;
+                   letter-spacing:.02em; color:var(--brand); }
+.progress-track { height:6px; border-radius:999px; background:var(--card); overflow:hidden; }
+.progress-fill { height:100%; border-radius:999px; background:var(--brand); }
+.deck-nav { flex:none; display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+.nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
+           background:var(--card); color:var(--brand); box-shadow:var(--shadow);
+           font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
+.nav-btn:hover { background:var(--brand-soft); }
+.nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
+.nav-back .icon { transform:scaleX(-1); }
+.close-btn, .back-btn, .continue-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+/* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
+.bar-row { display:flex; align-items:center; gap:12px; }
+.bar-row .progress { flex:1; }
+.continue-btn { position:relative; }
+.continue-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                       background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                       padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
+.continue-btn:hover::after, .continue-btn:focus-visible::after { opacity:1; }
+.deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
+
+/* Main page: one card per JLPT level */
+.decks { display:flex; flex-direction:column; gap:12px; }
+.deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
+             text-decoration:none; color:var(--ink); box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+a.deck-card:hover { background:var(--brand-soft); }
+a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
+            border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
+a.deck-card:hover .dc-level { background:var(--card); }
+.dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.dc-title { font-size:17px; font-weight:700; }
+.dc-meta { font-size:13px; color:var(--muted); }
+.dc-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.dc-tags { flex:none; display:flex; gap:6px; }
+.tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
+       line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
+.tag-progress { background:var(--pick); color:var(--pick-ink); }
+.tag-learned { background:var(--learn-on); color:var(--learn-ink); }
+.tag-soon { background:var(--tag); color:var(--tag-ink); }
+/* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
+.dc-chev-space { flex:none; width:10px; }
+.deck-card.soon { opacity:.5; box-shadow:none; }
+
+/* Deck page */
+body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
+.deck-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; }
+.deck-head h1 { font-size:24px; line-height:1.3; margin:0; color:var(--ink); }
+.deck-bars { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+.progress-fill.learned-fill { background:var(--learn-on); }
+.deck-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+@media (min-width:520px) { .deck-grid { grid-template-columns:repeat(6, 1fr); } }
+.tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px;
+        background:var(--card); border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
+        box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+.tile:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.tile.current { border-color:var(--brand); }
+.tk { font-size:32px; line-height:1.2; font-weight:500; }
+.tm { max-width:100%; padding:0 4px; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile-check { position:absolute; top:6px; right:6px; display:none; line-height:0; }
+.tile-check .learn-bg { fill:var(--learn-on); }
+.tile.learned .tile-check { display:block; }
+
+/* Deck page, list view: one elongated card per kanji */
+.deck-list { display:flex; flex-direction:column; gap:8px; }
+.row { display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--card);
+       border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
+       box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+.row:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.row.current { border-color:var(--brand); }
+.rk { flex:none; width:40px; text-align:center; font-size:30px; line-height:1.2; font-weight:500; }
+.rmn { flex:1; min-width:0; font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.row-check { flex:none; line-height:0; }
+.row-check .learn-bg { fill:var(--learn-off); }
+.row.learned .row-check .learn-bg { fill:var(--learn-on); }
+/* Read = opened at least once: a faint lavender tint, in both views */
+.row.read, .tile.read { background:var(--read-tint); }
+.row:hover, .tile:hover { background:var(--brand-soft); }
+.deck-list[hidden], .deck-grid[hidden] { display:none; }
+/* List / Grid switch */
+.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--card); border-radius:999px;
+             box-shadow:0 2px 8px rgba(26,20,77,.06); }
+.view-tabs button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:30px; padding:0; border:0;
+                    border-radius:999px; background:none; color:var(--brand); font:inherit; font-size:12.8px;
+                    font-weight:700; cursor:pointer; transition:background .12s, color .12s; }
+.view-tabs button:hover { background:var(--brand-soft); }
+.view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
+.view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.view-tabs svg { display:block; }
+.card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N2:checked) .word:not([data-level="N2"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
+<body data-deck="N5" data-kanji="北"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="45" aria-label="Card 45 of 79"><div class="progress-legend"><span>45 / 79</span><span>57%</span></div><div class="progress-track"><div class="progress-fill" style="width:57%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
+<header><button type="button" class="learn" data-kanji="北" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">北</div>
+<div class="info"><span class="lv">N5</span><div class="meaning">north</div>
+<div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">ホク</span><span class="ro">hoku</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">きた</span><span class="ro">kita</span></span></div></div></div></header>
+<div class="sections">
+<details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chevron-down">
+<path id="Vector" d="M2.5 3.75L5 6.25L7.5 3.75" stroke-width="2" stroke-linecap="round" stroke="#261C76"/>
+</g>
+</svg></span><h2>Radicals</h2></span><span class="count">2</span></summary><div class="radicals"><div class="radical"><span class="rg" lang="ja">匕</span><span class="rm">spoon, spoon or katakana hi</span></div><div class="radical"><span class="rg" lang="ja">爿</span><span class="rm">left-side kata</span></div></div></details>
+<details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chevron-down">
+<path id="Vector" d="M2.5 3.75L5 6.25L7.5 3.75" stroke-width="2" stroke-linecap="round" stroke="#261C76"/>
+</g>
+</svg></span><h2>Vocabulary</h2></span><span class="count">13</span></summary><div class="vocab"><div class="picker" role="radiogroup" aria-label="Vocabulary level"><input type="radio" name="lvl" id="lv-all" checked><label for="lv-all">All</label><input type="radio" name="lvl" id="lv-N5"><label for="lv-N5">N5</label><input type="radio" name="lvl" id="lv-N2"><label for="lv-N2">N2</label></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>きた</rt></ruby></span></span><span class="wr"><span lang="ja">きた</span><button type="button" class="play" data-say="きた" aria-label="Play 北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N5</span></span></div><div class="word-en">north</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>きた</rt></ruby></span>って、どっち？</div><button type="button" class="play" data-say="北って、どっち？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Which direction is north?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>磁<rt>じ</rt></ruby></span><span class="fg"><ruby>石<rt>しゃく</rt></ruby></span>の<span class="fg"><ruby>針<rt>はり</rt></ruby></span>は<span class="fg"><ruby>北<rt>きた</rt></ruby></span>を<span class="fg"><ruby>指<rt>さ</rt></ruby></span>す。</div><button type="button" class="play" data-say="磁石の針は北を指す。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Compass needles point to the north.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">コンパスは<span class="fg"><ruby>北<rt>きた</rt></ruby></span>を<span class="fg"><ruby>示<rt>しめ</rt></ruby></span>す。</div><button type="button" class="play" data-say="コンパスは北を示す。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Compasses point north.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>きた</rt></ruby></span>って、どっち？</div><button type="button" class="play" data-say="北って、どっち？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Which direction is north?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>風<rt>かぜ</rt></ruby></span>は<span class="fg"><ruby>北<rt>きた</rt></ruby></span>から<span class="fg"><ruby>吹<rt>ふ</rt></ruby></span>いている。</div><button type="button" class="play" data-say="風は北から吹いている。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The wind is blowing from the north.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>海<rt>かい</rt></ruby></span><span class="fg"><ruby>道<rt>どう</rt></ruby></span>は<span class="fg"><ruby>本<rt>ほん</rt></ruby></span><span class="fg"><ruby>州<rt>しゅう</rt></ruby></span>の<span class="fg"><ruby>北<rt>きた</rt></ruby></span>にある。</div><button type="button" class="play" data-say="北海道は本州の北にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Hokkaido is to the north of Honshu.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>南<rt>なん</rt></ruby></span><span><ruby>北<rt>ぼく</rt></ruby></span></span><span class="wr"><span lang="ja">なんぼく</span><button type="button" class="play" data-say="なんぼく" aria-label="Play 南北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">north and south; north to south</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>日本<rt>にっぽん</rt></ruby></span>は<span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span>に<span class="fg"><ruby>長<rt>なが</rt></ruby></span>い<span class="fg"><ruby>国<rt>くに</rt></ruby></span>です。</div><button type="button" class="play" data-say="日本は南北に長い国です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Japan is a very long country from north to south.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span><span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>争<rt>そう</rt></ruby></span>の<span class="fg"><ruby>歴<rt>れき</rt></ruby></span><span class="fg"><ruby>史<rt>し</rt></ruby></span><span class="fg"><ruby>書<rt>しょ</rt></ruby></span>を<span class="fg"><ruby>書<rt>か</rt></ruby></span>いた。</div><button type="button" class="play" data-say="彼は南北戦争の歴史書を書いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He wrote a book about the American Civil War.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span><span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>争<rt>そう</rt></ruby></span>はいつ<span class="fg"><ruby>始<rt>はじ</rt></ruby></span>まったのかしら。</div><button type="button" class="play" data-say="南北戦争はいつ始まったのかしら。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I wonder when the Civil War started.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>日本<rt>にっぽん</rt></ruby></span>は<span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span>に<span class="fg"><ruby>長<rt>なが</rt></ruby></span>い<span class="fg"><ruby>国<rt>くに</rt></ruby></span>です。</div><button type="button" class="play" data-say="日本は南北に長い国です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Japan is a very long country from north to south.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span><span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>争<rt>そう</rt></ruby></span>の<span class="fg"><ruby>歴<rt>れき</rt></ruby></span><span class="fg"><ruby>史<rt>し</rt></ruby></span><span class="fg"><ruby>書<rt>しょ</rt></ruby></span>を<span class="fg"><ruby>書<rt>か</rt></ruby></span>いた。</div><button type="button" class="play" data-say="彼は南北戦争の歴史書を書いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He wrote a book about the American Civil War.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span><span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>争<rt>そう</rt></ruby></span>はいつ<span class="fg"><ruby>始<rt>はじ</rt></ruby></span>まったのかしら。</div><button type="button" class="play" data-say="南北戦争はいつ始まったのかしら。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I wonder when the Civil War started.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほっ</rt></ruby></span><span><ruby>極<rt>きょく</rt></ruby></span></span><span class="wr"><span lang="ja">ほっきょく</span><button type="button" class="play" data-say="ほっきょく" aria-label="Play 北極"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">North Pole</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>見<rt>み</rt></ruby></span>て、<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span><span class="fg"><ruby>星<rt>ほし</rt></ruby></span>よ。</div><button type="button" class="play" data-say="見て、北極星よ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Look, it&#x27;s the North Star.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>らは<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span><span class="fg"><ruby>探<rt>たん</rt></ruby></span><span class="fg"><ruby>検<rt>けん</rt></ruby></span>に<span class="fg"><ruby>出<rt>で</rt></ruby></span>た。</div><button type="button" class="play" data-say="彼らは北極探検に出た。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">They went on an expedition to the North Pole.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span><span class="fg"><ruby>探<rt>たん</rt></ruby></span><span class="fg"><ruby>検<rt>けん</rt></ruby></span>に<span class="fg"><ruby>出<rt>で</rt></ruby></span>かけた。</div><button type="button" class="play" data-say="彼は北極探検に出かけた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He left on an expedition to the North Pole.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>見<rt>み</rt></ruby></span>て、<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span><span class="fg"><ruby>星<rt>ほし</rt></ruby></span>よ。</div><button type="button" class="play" data-say="見て、北極星よ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Look, it&#x27;s the North Star.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>見<rt>み</rt></ruby></span>て、これは<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span><span class="fg"><ruby>星<rt>ほし</rt></ruby></span>です。</div><button type="button" class="play" data-say="見て、これは北極星です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Look, it&#x27;s the North Star.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>南<rt>なん</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span>は<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>極<rt>きょく</rt></ruby></span>よりもずっと<span class="fg"><ruby>寒<rt>さむ</rt></ruby></span>い。</div><button type="button" class="play" data-say="南極は北極よりもずっと寒い。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The South Pole is a lot colder than the North Pole.</div></li></ul></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北京<rt>ぺきん</rt></ruby></span></span><span class="wr"><span lang="ja">ぺきん</span><button type="button" class="play" data-say="ぺきん" aria-label="Play 北京"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">Beijing (China); Peking</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北京<rt>ぺきん</rt></ruby></span>から<span class="fg"><ruby>来<rt>き</rt></ruby></span>ました。</div><button type="button" class="play" data-say="北京から来ました。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I come from Beijing.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北京<rt>ぺきん</rt></ruby></span>は<span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>国<rt>ごく</rt></ruby></span>の<span class="fg"><ruby>首<rt>しゅ</rt></ruby></span><span class="fg"><ruby>都<rt>と</rt></ruby></span>だ。</div><button type="button" class="play" data-say="北京は中国の首都だ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Beijing is the capital of China.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北京<rt>ぺきん</rt></ruby></span>は<span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>速<rt>そく</rt></ruby></span>に<span class="fg"><ruby>変<rt>か</rt></ruby></span>わっている。</div><button type="button" class="play" data-say="北京は急速に変わっている。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Beijing is changing so rapidly.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>きた</rt></ruby></span><span><ruby>朝<rt>ちょう</rt></ruby></span><span><ruby>鮮<rt>せん</rt></ruby></span></span><span class="wr"><span lang="ja">きたちょうせん</span><button type="button" class="play" data-say="きたちょうせん" aria-label="Play 北朝鮮"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">North Korea</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>私<rt>わたくし</rt></ruby></span>は<span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>朝<rt>ちょう</rt></ruby></span><span class="fg"><ruby>鮮<rt>せん</rt></ruby></span><span class="fg"><ruby>人<rt>にん</rt></ruby></span>です。</div><button type="button" class="play" data-say="私は北朝鮮人です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I&#x27;m North Korean.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>平壌<rt>ぴょんやん</rt></ruby></span>は<span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>朝<rt>ちょう</rt></ruby></span><span class="fg"><ruby>鮮<rt>せん</rt></ruby></span>の<span class="fg"><ruby>首<rt>しゅ</rt></ruby></span><span class="fg"><ruby>都<rt>と</rt></ruby></span>です。</div><button type="button" class="play" data-say="平壌は北朝鮮の首都です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Pyongyang is the capital of North Korea.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>朝<rt>ちょう</rt></ruby></span><span class="fg"><ruby>鮮<rt>せん</rt></ruby></span>と<span class="fg"><ruby>韓<rt>かん</rt></ruby></span><span class="fg"><ruby>国<rt>こく</rt></ruby></span>は<span class="fg"><ruby>隣<rt>となり</rt></ruby></span><span class="fg"><ruby>同<rt>どう</rt></ruby></span><span class="fg"><ruby>士<rt>し</rt></ruby></span>です。</div><button type="button" class="play" data-say="北朝鮮と韓国は隣同士です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">North Korea and South Korea are neighbors.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほっ</rt></ruby></span><span><ruby>海<rt>かい</rt></ruby></span><span><ruby>道<rt>どう</rt></ruby></span></span><span class="wr"><span lang="ja">ほっかいどう</span><button type="button" class="play" data-say="ほっかいどう" aria-label="Play 北海道"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">Hokkaido (island, prefectural-level administrative unit)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>海<rt>かい</rt></ruby></span><span class="fg"><ruby>道<rt>どう</rt></ruby></span>は<span class="fg"><ruby>雪<rt>ゆき</rt></ruby></span>だろう。</div><button type="button" class="play" data-say="北海道は雪だろう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">It may be snowing in Hokkaido.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>私<rt>わたくし</rt></ruby></span>は、<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>海<rt>かい</rt></ruby></span><span class="fg"><ruby>道<rt>どう</rt></ruby></span>に<span class="fg"><ruby>行<rt>い</rt></ruby></span>く。</div><button type="button" class="play" data-say="私は、北海道に行く。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I&#x27;m going to Hokkaido.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>海<rt>かい</rt></ruby></span><span class="fg"><ruby>道<rt>どう</rt></ruby></span><span class="fg"><ruby>出<rt>しゅっ</rt></ruby></span><span class="fg"><ruby>身<rt>しん</rt></ruby></span>ですよね。</div><button type="button" class="play" data-say="北海道出身ですよね。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">You are from Hokkaido, aren&#x27;t you?</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほっ</rt></ruby></span><span><ruby>方<rt>ぽう</rt></ruby></span></span><span class="wr"><span lang="ja">ほっぽう</span><button type="button" class="play" data-say="ほっぽう" aria-label="Play 北方"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">the north; northward; northern direction</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>船<rt>ふね</rt></ruby></span>は<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>方<rt>ぽう</rt></ruby></span>に<span class="fg"><ruby>進<rt>しん</rt></ruby></span><span class="fg"><ruby>路<rt>ろ</rt></ruby></span>をとった。</div><button type="button" class="play" data-say="船は北方に進路をとった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The ship struck northward.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>海<rt>かい</rt></ruby></span><span class="fg"><ruby>道<rt>どう</rt></ruby></span>は<span class="fg"><ruby>仙<rt>せん</rt></ruby></span><span class="fg"><ruby>台<rt>だい</rt></ruby></span>の<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>方<rt>ぽう</rt></ruby></span>にある。</div><button type="button" class="play" data-say="北海道は仙台の北方にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Hokkaido is to the north of Sendai.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">2<span class="fg"><ruby>月<rt>がつ</rt></ruby></span>7<span class="fg"><ruby>日<rt>か</rt></ruby></span>は<span class="fg"><ruby>日本<rt>にっぽん</rt></ruby></span>では<span class="fg"><ruby>北<rt>ほっ</rt></ruby></span><span class="fg"><ruby>方<rt>ぽう</rt></ruby></span><span class="fg"><ruby>領<rt>りょう</rt></ruby></span><span class="fg"><ruby>土<rt>ど</rt></ruby></span>の<span class="fg"><ruby>日<rt>ひ</rt></ruby></span>です。</div><button type="button" class="play" data-say="2月7日は日本では北方領土の日です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">February 7th is Northern Territories Day in Japan.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>東<rt>とう</rt></ruby></span><span><ruby>北<rt>ほく</rt></ruby></span></span><span class="wr"><span lang="ja">とうほく</span><button type="button" class="play" data-say="とうほく" aria-label="Play 東北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">north-east</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>はこの<span class="fg"><ruby>夏<rt>なつ</rt></ruby></span>、<span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>地<rt>ち</rt></ruby></span><span class="fg"><ruby>方<rt>ほう</rt></ruby></span>を<span class="fg"><ruby>旅<rt>りょ</rt></ruby></span><span class="fg"><ruby>行<rt>こう</rt></ruby></span>した。</div><button type="button" class="play" data-say="彼はこの夏、東北地方を旅行した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He traveled through the Tohoku district this summer.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>今年<rt>ことし</rt></ruby></span>の<span class="fg"><ruby>夏<rt>なつ</rt></ruby></span>、<span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>地<rt>ち</rt></ruby></span><span class="fg"><ruby>方<rt>ほう</rt></ruby></span>を<span class="fg"><ruby>旅<rt>りょ</rt></ruby></span><span class="fg"><ruby>行<rt>こう</rt></ruby></span>した。</div><button type="button" class="play" data-say="彼は今年の夏、東北地方を旅行した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He traveled through the Tohoku district this summer.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>地<rt>ち</rt></ruby></span><span class="fg"><ruby>方<rt>ほう</rt></ruby></span>は<span class="fg"><ruby>旅<rt>りょ</rt></ruby></span><span class="fg"><ruby>行<rt>こう</rt></ruby></span>する<span class="fg"><ruby>価<rt>か</rt></ruby></span><span class="fg"><ruby>値<rt>ち</rt></ruby></span>があります。</div><button type="button" class="play" data-say="東北地方は旅行する価値があります。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The Tohoku district is worth traveling to.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほく</rt></ruby></span><span><ruby>部<rt>ぶ</rt></ruby></span></span><span class="wr"><span lang="ja">ほくぶ</span><button type="button" class="play" data-say="ほくぶ" aria-label="Play 北部"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">northern part; the north (of a region)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>私<rt>わたくし</rt></ruby></span>の<span class="fg"><ruby>家<rt>いえ</rt></ruby></span>は<span class="fg"><ruby>市<rt>し</rt></ruby></span>の<span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>部<rt>ぶ</rt></ruby></span>にある。</div><button type="button" class="play" data-say="私の家は市の北部にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">My house is in the northern part of the city.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>部<rt>ぶ</rt></ruby></span>には<span class="fg"><ruby>巨<rt>きょ</rt></ruby></span><span class="fg"><ruby>大<rt>だい</rt></ruby></span>な<span class="fg"><ruby>山<rt>やま</rt></ruby></span><span class="fg"><ruby>々<rt>やま</rt></ruby></span>がある。</div><button type="button" class="play" data-say="北部には巨大な山々がある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">There are colossal mountains in the north.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>十和田湖<rt>とわだこ</rt></ruby></span>は<span class="fg"><ruby>日本<rt>にっぽん</rt></ruby></span>の<span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>部<rt>ぶ</rt></ruby></span>にある。</div><button type="button" class="play" data-say="十和田湖は日本の北部にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Lake Towada is in the north of Japan.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほく</rt></ruby></span><span><ruby>東<rt>とう</rt></ruby></span></span><span class="wr"><span lang="ja">ほくとう</span><button type="button" class="play" data-say="ほくとう" aria-label="Play 北東"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">northeast</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>北<rt>ほく</rt></ruby></span><span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>方<rt>ほう</rt></ruby></span><span class="fg"><ruby>向<rt>こう</rt></ruby></span>に<span class="fg"><ruby>土<rt>と</rt></ruby></span><span class="fg"><ruby>地<rt>ち</rt></ruby></span>が<span class="fg"><ruby>低<rt>ひく</rt></ruby></span>く<span class="fg"><ruby>横<rt>よこ</rt></ruby></span>たわっていた。</div><button type="button" class="play" data-say="北東方向に土地が低く横たわっていた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The land to the northeast was low-lying.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>敗<rt>はい</rt></ruby></span><span><ruby>北<rt>ぼく</rt></ruby></span></span><span class="wr"><span lang="ja">はいぼく</span><button type="button" class="play" data-say="はいぼく" aria-label="Play 敗北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">defeat; loss; reverse</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>実<rt>じつ</rt></ruby></span>は<span class="fg"><ruby>我<rt>われ</rt></ruby></span><span class="fg"><ruby>々<rt>われ</rt></ruby></span>は<span class="fg"><ruby>敗<rt>はい</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span>を<span class="fg"><ruby>覚<rt>かく</rt></ruby></span><span class="fg"><ruby>悟<rt>ご</rt></ruby></span>していた。</div><button type="button" class="play" data-say="実は我々は敗北を覚悟していた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Actually, we had prepared ourselves for defeat.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>決<rt>けっ</rt></ruby></span>して<span class="fg"><ruby>敗<rt>はい</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span>を<span class="fg"><ruby>認<rt>みと</rt></ruby></span>めないだろう。</div><button type="button" class="play" data-say="彼は決して敗北を認めないだろう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He will on no account accept defeat.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>敗<rt>はい</rt></ruby></span><span class="fg"><ruby>北<rt>ぼく</rt></ruby></span>した<span class="fg"><ruby>軍<rt>ぐん</rt></ruby></span>はその<span class="fg"><ruby>国<rt>くに</rt></ruby></span>から<span class="fg"><ruby>撤<rt>てっ</rt></ruby></span><span class="fg"><ruby>退<rt>たい</rt></ruby></span>した。</div><button type="button" class="play" data-say="敗北した軍はその国から撤退した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The defeated army retreated from the country.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>きた</rt></ruby></span><span><ruby>側<rt>がわ</rt></ruby></span></span><span class="wr"><span lang="ja">きたがわ</span><button type="button" class="play" data-say="きたがわ" aria-label="Play 北側"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">north side; north bank</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>別<rt>べっ</rt></ruby></span><span class="fg"><ruby>館<rt>かん</rt></ruby></span>は<span class="fg"><ruby>本<rt>ほん</rt></ruby></span><span class="fg"><ruby>館<rt>かん</rt></ruby></span>の<span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>側<rt>がわ</rt></ruby></span>にある。</div><button type="button" class="play" data-say="別館は本館の北側にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The annex is on the north of the original building.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">カナダはアメリカの<span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>側<rt>がわ</rt></ruby></span>にある。</div><button type="button" class="play" data-say="カナダはアメリカの北側にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Canada is on the north side of America.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>私<rt>わたくし</rt></ruby></span>たちの<span class="fg"><ruby>事<rt>じ</rt></ruby></span><span class="fg"><ruby>務<rt>む</rt></ruby></span><span class="fg"><ruby>所<rt>しょ</rt></ruby></span>はその<span class="fg"><ruby>建<rt>たて</rt></ruby></span><span class="fg"><ruby>物<rt>もの</rt></ruby></span>の<span class="fg"><ruby>北<rt>きた</rt></ruby></span><span class="fg"><ruby>側<rt>がわ</rt></ruby></span>にある。</div><button type="button" class="play" data-say="私たちの事務所はその建物の北側にある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Our office is on the northern side of the building.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>北<rt>ほく</rt></ruby></span><span><ruby>陸<rt>りく</rt></ruby></span></span><span class="wr"><span lang="ja">ほくりく</span><button type="button" class="play" data-say="ほくりく" aria-label="Play 北陸"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">Hokuriku region (of Honshu; incl. Niigata, Toyama, Ishikawa and Fukui prefectures)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><p class="none ph-all">No example phrases.</p><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div></div></details>
+</div>
+</article>
+<nav class="deck-nav" aria-label="Cards"><a class="nav-btn nav-back" href="%E5%A5%B3.html" aria-label="Back: 女"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Back</a><a class="nav-btn nav-next" href="%E5%8D%88.html" aria-label="Next: 午">Next<span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span></a></nav>
+</main><script>
+(() => {
+  const { deck, kanji } = document.body.dataset;
+  if (deck) { try { localStorage.setItem("last:" + deck, kanji); localStorage.setItem("seen:" + kanji, "1"); } catch {} }
+})();
+(() => {
+  const key = k => "learned:" + k;
+  const read = k => { try { return localStorage.getItem(key(k)) === "1"; } catch { return false; } };
+  const write = (k, on) => { try { on ? localStorage.setItem(key(k), "1") : localStorage.removeItem(key(k)); } catch {} };
+  const show = (b, on) => {
+    const tip = on ? "Mark as not learned" : "Mark as learned";
+    b.setAttribute("aria-pressed", on); b.dataset.tip = tip; b.setAttribute("aria-label", tip);
+  };
+  for (const b of document.querySelectorAll(".learn")) {
+    show(b, read(b.dataset.kanji));
+    b.addEventListener("click", () => {
+      const on = b.getAttribute("aria-pressed") !== "true";
+      write(b.dataset.kanji, on); show(b, on);
+    });
+  }
+})();
+(() => {
+  const s = window.speechSynthesis;
+  if (!s) return;
+  let voice = null;
+  const pick = () => {
+    voice = s.getVoices().find(v => /^ja/i.test(v.lang)) || null;
+    document.documentElement.classList.toggle("tts", !!voice);
+  };
+  pick();
+  s.addEventListener("voiceschanged", pick);
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".play");
+    if (!b || !voice) return;
+    s.cancel();
+    const u = new SpeechSynthesisUtterance(b.dataset.say);
+    u.lang = "ja-JP"; u.voice = voice; u.rate = 0.9;
+    s.speak(u);
+  });
+})();
+</script></body></html>

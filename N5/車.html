@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>車 kanji card</title><style>
+:root { --bg:#eae6f7; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
+        --brand:#261c76; --brand-soft:#eae6f7; --tag:#e5e5e5; --tag-ink:#6b665e; --unrated:#9a948a;
+        --pick:#261c76; --pick-ink:#fff; --shadow:0 4px 24px rgba(26,20,77,.12);
+        --learn-off:#e5e5e5; --learn-off-hover:#d6d6d6; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
+          --brand:#c9c0ff; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
+          --pick:#c9c0ff; --pick-ink:#1a1640; --shadow:0 4px 24px rgba(0,0,0,.4);
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; } }
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
+       font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif; }
+main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
+       display:flex; flex-direction:column; justify-content:center; }
+.card { background:var(--card); border-radius:20px; box-shadow:var(--shadow); padding:24px 20px;
+        height:min(90%, calc(100% - 128px)); overflow-y:auto; overscroll-behavior:contain;
+        display:flex; flex-direction:column; gap:24px; }
+.card > * { flex:none; }
+.icon { display:inline-flex; flex:none; }
+.icon path[stroke] { stroke:var(--brand); }
+.icon path[fill]:not([fill="none"]) { fill:var(--brand); }
+
+.card > header { position:relative; display:flex; align-items:flex-start; gap:16px; padding-bottom:20px; }
+/* "Learned" toggle: top-right corner, centred on the level badge's row */
+.learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
+         border-radius:50%; cursor:pointer; line-height:0; }
+.learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
+.learn:hover .learn-bg { fill:var(--learn-off-hover); }
+.learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
+.learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
+.learn:hover::after, .learn:focus-visible::after { opacity:1; }
+.kanji { font-size:96px; line-height:1; font-weight:500; }
+.info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
+.meaning { font-size:18px; line-height:1.4; font-weight:700; }
+.readings { align-self:stretch; display:flex; flex-direction:column; gap:2px; padding-top:4px; }
+.rrow { display:flex; align-items:baseline; gap:8px; }
+.rl { width:28px; flex:none; font-size:12px; color:var(--brand); }
+.rv { flex:1; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:14px; }
+.rv .ro { font-size:12px; }
+.ro { color:var(--muted); }
+
+.lv { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; line-height:1.5;
+      padding:1px 7px; border-radius:999px; background:var(--tag); color:var(--tag-ink); white-space:nowrap; }
+.lv.unrated { color:var(--unrated); font-weight:500; }
+
+.sections { display:flex; flex-direction:column; gap:16px; }
+details.sec { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+summary { cursor:pointer; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+details.sec > summary { background:var(--brand-soft); padding:10px 14px;
+                        display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.sl { display:flex; align-items:center; gap:8px; }
+.sec-chev { transform:rotate(-90deg); transition:transform .15s; }
+details.sec[open] > summary .sec-chev { transform:none; }
+h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--brand); margin:0; }
+.count { font-size:12px; color:var(--brand); }
+
+.radicals { padding:16px; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.radical { display:flex; align-items:center; gap:16px; padding:8px 16px; border:1px solid var(--line);
+           border-radius:10px; line-height:1.3; }
+.radical .rg { font-size:24px; }
+.radical .rm { font-size:12px; color:var(--muted); }
+
+.vocab { padding:8px 14px; }
+.picker { display:flex; flex-wrap:wrap; gap:6px 4px; padding-bottom:12px; }
+.picker input { position:absolute; opacity:0; pointer-events:none; }
+.picker label { font-size:12.8px; font-weight:700; padding:4px 12px; border-radius:999px; cursor:pointer;
+                border:1px solid var(--line); color:var(--brand); }
+.picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
+.picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
+
+.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;
+        border-bottom:1px solid var(--line); }
+.word:last-of-type { border-bottom:0; }
+.word-head { align-self:stretch; display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
+.lv-wrap { padding-bottom:6px; flex:none; }
+.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; }
+.word-ja rt { font-size:11.2px; font-weight:500; line-height:1.2; }
+.wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
+.word-en { font-size:16px; color:var(--muted); }
+
+details.ph { align-self:stretch; }
+details.ph > summary { display:flex; align-items:center; gap:8px; padding:2px 0; font-size:13.6px; color:var(--muted); }
+details.ph .chev-open { display:none; }
+details.ph[open] .chev-open { display:inline-flex; }
+details.ph[open] .chev-closed { display:none; }
+ul.phrases { list-style:none; margin:4px 0 0; padding:8px 0 8px 12px; border-left:3px solid var(--line);
+             display:flex; flex-direction:column; gap:10px; }
+ul.phrases li { display:flex; flex-direction:column; gap:2px; }
+.ph-row { display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.ph-ja { font-size:16.8px; }
+.ph-en { font-size:14.4px; color:var(--muted); }
+
+.fg { cursor:pointer; border-radius:3px; transition:background .12s; }
+.fg rt { visibility:hidden; font-size:.5em; font-weight:500; color:var(--ink); }
+.fg:hover { background:var(--brand-soft); }
+.fg:hover rt { visibility:visible; }
+
+.play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
+.tts .play { display:inline-flex; }
+.play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.none { color:var(--muted); font-size:14.4px; font-style:italic; margin:6px 0 0; }
+
+.top-row { flex:none; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.progress { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.progress-legend { display:flex; justify-content:space-between; font-size:12px; font-weight:700;
+                   letter-spacing:.02em; color:var(--brand); }
+.progress-track { height:6px; border-radius:999px; background:var(--card); overflow:hidden; }
+.progress-fill { height:100%; border-radius:999px; background:var(--brand); }
+.deck-nav { flex:none; display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+.nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
+           background:var(--card); color:var(--brand); box-shadow:var(--shadow);
+           font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
+.nav-btn:hover { background:var(--brand-soft); }
+.nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
+.nav-back .icon { transform:scaleX(-1); }
+.close-btn, .back-btn, .continue-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+/* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
+.bar-row { display:flex; align-items:center; gap:12px; }
+.bar-row .progress { flex:1; }
+.continue-btn { position:relative; }
+.continue-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                       background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                       padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
+.continue-btn:hover::after, .continue-btn:focus-visible::after { opacity:1; }
+.deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
+
+/* Main page: one card per JLPT level */
+.decks { display:flex; flex-direction:column; gap:12px; }
+.deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
+             text-decoration:none; color:var(--ink); box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+a.deck-card:hover { background:var(--brand-soft); }
+a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
+            border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
+a.deck-card:hover .dc-level { background:var(--card); }
+.dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.dc-title { font-size:17px; font-weight:700; }
+.dc-meta { font-size:13px; color:var(--muted); }
+.dc-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.dc-tags { flex:none; display:flex; gap:6px; }
+.tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
+       line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
+.tag-progress { background:var(--pick); color:var(--pick-ink); }
+.tag-learned { background:var(--learn-on); color:var(--learn-ink); }
+.tag-soon { background:var(--tag); color:var(--tag-ink); }
+/* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
+.dc-chev-space { flex:none; width:10px; }
+.deck-card.soon { opacity:.5; box-shadow:none; }
+
+/* Deck page */
+body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
+.deck-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; }
+.deck-head h1 { font-size:24px; line-height:1.3; margin:0; color:var(--ink); }
+.deck-bars { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+.progress-fill.learned-fill { background:var(--learn-on); }
+.deck-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+@media (min-width:520px) { .deck-grid { grid-template-columns:repeat(6, 1fr); } }
+.tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px;
+        background:var(--card); border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
+        box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+.tile:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.tile.current { border-color:var(--brand); }
+.tk { font-size:32px; line-height:1.2; font-weight:500; }
+.tm { max-width:100%; padding:0 4px; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile-check { position:absolute; top:6px; right:6px; display:none; line-height:0; }
+.tile-check .learn-bg { fill:var(--learn-on); }
+.tile.learned .tile-check { display:block; }
+
+/* Deck page, list view: one elongated card per kanji */
+.deck-list { display:flex; flex-direction:column; gap:8px; }
+.row { display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--card);
+       border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
+       box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+.row:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.row.current { border-color:var(--brand); }
+.rk { flex:none; width:40px; text-align:center; font-size:30px; line-height:1.2; font-weight:500; }
+.rmn { flex:1; min-width:0; font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.row-check { flex:none; line-height:0; }
+.row-check .learn-bg { fill:var(--learn-off); }
+.row.learned .row-check .learn-bg { fill:var(--learn-on); }
+/* Read = opened at least once: a faint lavender tint, in both views */
+.row.read, .tile.read { background:var(--read-tint); }
+.row:hover, .tile:hover { background:var(--brand-soft); }
+.deck-list[hidden], .deck-grid[hidden] { display:none; }
+/* List / Grid switch */
+.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--card); border-radius:999px;
+             box-shadow:0 2px 8px rgba(26,20,77,.06); }
+.view-tabs button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:30px; padding:0; border:0;
+                    border-radius:999px; background:none; color:var(--brand); font:inherit; font-size:12.8px;
+                    font-weight:700; cursor:pointer; transition:background .12s, color .12s; }
+.view-tabs button:hover { background:var(--brand-soft); }
+.view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
+.view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.view-tabs svg { display:block; }
+.card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N4:checked) .word:not([data-level="N4"]) { display:none; }.card:has(#lv-N3:checked) .word:not([data-level="N3"]) { display:none; }.card:has(#lv-N2:checked) .word:not([data-level="N2"]) { display:none; }.card:has(#lv-N1:checked) .word:not([data-level="N1"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
+<body data-deck="N5" data-kanji="車"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="64" aria-label="Card 64 of 79"><div class="progress-legend"><span>64 / 79</span><span>81%</span></div><div class="progress-track"><div class="progress-fill" style="width:81%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
+<header><button type="button" class="learn" data-kanji="車" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">車</div>
+<div class="info"><span class="lv">N5</span><div class="meaning">car</div>
+<div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">シャ</span><span class="ro">sha</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">くるま</span><span class="ro">kuruma</span></span></div></div></div></header>
+<div class="sections">
+<details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chevron-down">
+<path id="Vector" d="M2.5 3.75L5 6.25L7.5 3.75" stroke-width="2" stroke-linecap="round" stroke="#261C76"/>
+</g>
+</svg></span><h2>Radicals</h2></span><span class="count">1</span></summary><div class="radicals"><div class="radical"><span class="rg" lang="ja">車</span><span class="rm">car</span></div></div></details>
+<details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chevron-down">
+<path id="Vector" d="M2.5 3.75L5 6.25L7.5 3.75" stroke-width="2" stroke-linecap="round" stroke="#261C76"/>
+</g>
+</svg></span><h2>Vocabulary</h2></span><span class="count">28</span></summary><div class="vocab"><div class="picker" role="radiogroup" aria-label="Vocabulary level"><input type="radio" name="lvl" id="lv-all" checked><label for="lv-all">All</label><input type="radio" name="lvl" id="lv-N5"><label for="lv-N5">N5</label><input type="radio" name="lvl" id="lv-N4"><label for="lv-N4">N4</label><input type="radio" name="lvl" id="lv-N3"><label for="lv-N3">N3</label><input type="radio" name="lvl" id="lv-N2"><label for="lv-N2">N2</label><input type="radio" name="lvl" id="lv-N1"><label for="lv-N1">N1</label></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>くるま</rt></ruby></span></span><span class="wr"><span lang="ja">くるま</span><button type="button" class="play" data-say="くるま" aria-label="Play 車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N5</span></span></div><div class="word-en">car; automobile; vehicle</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>が<span class="fg"><ruby>青<rt>あお</rt></ruby></span>い。</div><button type="button" class="play" data-say="車が青い。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car is blue.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>がある。</div><button type="button" class="play" data-say="車がある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I have a car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>に<span class="fg"><ruby>乗<rt>の</rt></ruby></span>る。</div><button type="button" class="play" data-say="車に乗る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I&#x27;ll take a car.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>が<span class="fg"><ruby>青<rt>あお</rt></ruby></span>い。</div><button type="button" class="play" data-say="車が青い。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car is blue.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>がある。</div><button type="button" class="play" data-say="車がある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I have a car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>に<span class="fg"><ruby>乗<rt>の</rt></ruby></span>る。</div><button type="button" class="play" data-say="車に乗る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I&#x27;ll take a car.</div></li></ul></details></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>自<rt>じ</rt></ruby></span><span><ruby>動<rt>どう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">じどうしゃ</span><button type="button" class="play" data-say="じどうしゃ" aria-label="Play 自動車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N5</span></span></div><div class="word-en">car; automobile; motorcar</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>左<rt>さ</rt></ruby></span><span class="fg"><ruby>折<rt>せつ</rt></ruby></span>した。</div><button type="button" class="play" data-say="自動車は左折した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car made a turn to the left.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>面<rt>めん</rt></ruby></span><span class="fg"><ruby>衝<rt>しょう</rt></ruby></span><span class="fg"><ruby>突<rt>とつ</rt></ruby></span>した。</div><button type="button" class="play" data-say="自動車が正面衝突した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The cars collided head on.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">この<span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>日本<rt>にっぽん</rt></ruby></span><span class="fg"><ruby>製<rt>せい</rt></ruby></span>だ。</div><button type="button" class="play" data-say="この自動車は日本製だ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This car was made in Japan.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja">これは<span class="fg"><ruby>私<rt>わたくし</rt></ruby></span>の<span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>です。</div><button type="button" class="play" data-say="これは私の自動車です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This is my car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>気<rt>き</rt></ruby></span><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>静<rt>しず</rt></ruby></span>かです。</div><button type="button" class="play" data-say="電気自動車は静かです。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Electric cars are quiet.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>速<rt>はや</rt></ruby></span>く<span class="fg"><ruby>走<rt>はし</rt></ruby></span>っている。</div><button type="button" class="play" data-say="自動車が速く走っている。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car is running fast.</div></li></ul></details></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>電<rt>でん</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">でんしゃ</span><button type="button" class="play" data-say="でんしゃ" aria-label="Play 電車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N5</span></span></div><div class="word-en">train; electric train</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>来<rt>き</rt></ruby></span>たよ。</div><button type="button" class="play" data-say="電車来たよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Here comes the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>で<span class="fg"><ruby>行<rt>い</rt></ruby></span>こう。</div><button type="button" class="play" data-say="電車で行こう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Let&#x27;s take a train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>く</rt></ruby></span>るよ！</div><button type="button" class="play" data-say="電車が来るよ！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train is coming!</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>来<rt>き</rt></ruby></span>たよ。</div><button type="button" class="play" data-say="電車来たよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Here comes the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>で<span class="fg"><ruby>行<rt>い</rt></ruby></span>こう。</div><button type="button" class="play" data-say="電車で行こう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Let&#x27;s take a train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>く</rt></ruby></span>るよ！</div><button type="button" class="play" data-say="電車が来るよ！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train is coming!</div></li></ul></details></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>自<rt>じ</rt></ruby></span><span><ruby>転<rt>てん</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">じてんしゃ</span><button type="button" class="play" data-say="じてんしゃ" aria-label="Play 自転車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N5</span></span></div><div class="word-en">bicycle; bike</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>がある。</div><button type="button" class="play" data-say="自転車がある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I have a bike.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>で<span class="fg"><ruby>行<rt>おこな</rt></ruby></span>った。</div><button type="button" class="play" data-say="自転車で行った。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I went on a bicycle.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>通<rt>つう</rt></ruby></span><span class="fg"><ruby>勤<rt>きん</rt></ruby></span>です。</div><button type="button" class="play" data-say="自転車通勤です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I bike to work.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>がある。</div><button type="button" class="play" data-say="自転車がある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I have a bike.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>はあるの？</div><button type="button" class="play" data-say="自転車はあるの？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Have you got a bike?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>、<span class="fg"><ruby>買<rt>か</rt></ruby></span>って。</div><button type="button" class="play" data-say="自転車、買って。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Buy me a bicycle.</div></li></ul></details></div><div class="word" data-level="N4"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>駐<rt>ちゅう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>場<rt>じょう</rt></ruby></span></span><span class="wr"><span lang="ja">ちゅうしゃじょう</span><button type="button" class="play" data-say="ちゅうしゃじょう" aria-label="Play 駐車場"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N4</span></span></div><div class="word-en">parking lot; car park; carpark</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はある？</div><button type="button" class="play" data-say="駐車場はある？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>は<span class="fg"><ruby>満<rt>まん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>です。</div><button type="button" class="play" data-say="駐車場は満車です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">There are no parking spaces left.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はありますか。</div><button type="button" class="play" data-say="駐車場はありますか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はある？</div><button type="button" class="play" data-say="駐車場はある？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はありますか。</div><button type="button" class="play" data-say="駐車場はありますか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はありますか？</div><button type="button" class="play" data-say="駐車場はありますか？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a car park?</div></li></ul></details></div><div class="word" data-level="N4"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>汽<rt>き</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">きしゃ</span><button type="button" class="play" data-say="きしゃ" aria-label="Play 汽車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N4</span></span></div><div class="word-en">steam locomotive; steam train</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>脱<rt>だっ</rt></ruby></span><span class="fg"><ruby>線<rt>せん</rt></ruby></span>した。</div><button type="button" class="play" data-say="汽車が脱線した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train was derailed.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">あ、<span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>き</rt></ruby></span>た。</div><button type="button" class="play" data-say="あ、汽車が来た。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Here comes the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>を<span class="fg"><ruby>降<rt>お</rt></ruby></span>りた。</div><button type="button" class="play" data-say="彼は汽車を降りた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He got off the train.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>を<span class="fg"><ruby>降<rt>お</rt></ruby></span>りた。</div><button type="button" class="play" data-say="彼は汽車を降りた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He got off the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>に<span class="fg"><ruby>乗<rt>の</rt></ruby></span>った。</div><button type="button" class="play" data-say="彼は汽車に乗った。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">He got on the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>汽<rt>き</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>に<span class="fg"><ruby>間<rt>ま</rt></ruby></span>にあった。</div><button type="button" class="play" data-say="汽車に間にあった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I got there in time for the train.</div></li></ul></details></div><div class="word" data-level="N3"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>列<rt>れっ</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">れっしゃ</span><button type="button" class="play" data-say="れっしゃ" aria-label="Play 列車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N3</span></span></div><div class="word-en">train; railway train</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>き</rt></ruby></span>たよ。</div><button type="button" class="play" data-say="列車が来たよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train has arrived.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>脱<rt>だっ</rt></ruby></span><span class="fg"><ruby>線<rt>せん</rt></ruby></span>した。</div><button type="button" class="play" data-say="列車は脱線した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train ran off the tracks.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>加<rt>か</rt></ruby></span><span class="fg"><ruby>速<rt>そく</rt></ruby></span>した。</div><button type="button" class="play" data-say="列車は加速した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train gathered speed.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>き</rt></ruby></span>たよ。</div><button type="button" class="play" data-say="列車が来たよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train has arrived.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">さあ<span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>がきた。</div><button type="button" class="play" data-say="さあ列車がきた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Here comes the train.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>に<span class="fg"><ruby>乗<rt>の</rt></ruby></span>ってた？</div><button type="button" class="play" data-say="列車に乗ってた？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Were you on the train?</div></li></ul></details></div><div class="word" data-level="N3"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>駐<rt>ちゅう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">ちゅうしゃ</span><button type="button" class="play" data-say="ちゅうしゃ" aria-label="Play 駐車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N3</span></span></div><div class="word-en">parking (a vehicle)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>禁<rt>きん</rt></ruby></span><span class="fg"><ruby>止<rt>し</rt></ruby></span>。</div><button type="button" class="play" data-say="駐車禁止。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">No parking.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>禁<rt>きん</rt></ruby></span><span class="fg"><ruby>止<rt>し</rt></ruby></span>！</div><button type="button" class="play" data-say="駐車禁止！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">No parking!</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はある？</div><button type="button" class="play" data-say="駐車場はある？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>禁<rt>きん</rt></ruby></span><span class="fg"><ruby>止<rt>し</rt></ruby></span>。</div><button type="button" class="play" data-say="駐車禁止。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">No parking.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>禁<rt>きん</rt></ruby></span><span class="fg"><ruby>止<rt>し</rt></ruby></span>！</div><button type="button" class="play" data-say="駐車禁止！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">No parking!</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>駐<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>場<rt>じょう</rt></ruby></span>はある？</div><button type="button" class="play" data-say="駐車場はある？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is there a parking lot?</div></li></ul></details></div><div class="word" data-level="N3"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>発<rt>はっ</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">はっしゃ</span><button type="button" class="play" data-say="はっしゃ" aria-label="Play 発車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N3</span></span></div><div class="word-en">departure (of a train, car, etc.); starting; leaving</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>ホームはどちらですか。</div><button type="button" class="play" data-say="発車ホームはどちらですか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Which is the departure platform?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">バスは<span class="fg"><ruby>五<rt>ご</rt></ruby></span><span class="fg"><ruby>分<rt>ふん</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>に<span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>します。</div><button type="button" class="play" data-say="バスは五分後に発車します。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The bus leaves in five minutes.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>後<rt>ご</rt></ruby></span><span class="fg"><ruby>五<rt>ご</rt></ruby></span><span class="fg"><ruby>分<rt>ふん</rt></ruby></span>で<span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>します。</div><button type="button" class="play" data-say="電車は後五分で発車します。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train leaves in 5 minutes.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>ホームはどちらですか。</div><button type="button" class="play" data-say="発車ホームはどちらですか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Which is the departure platform?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>時<rt>じ</rt></ruby></span><span class="fg"><ruby>間<rt>かん</rt></ruby></span><span class="fg"><ruby>通<rt>とお</rt></ruby></span>りに<span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="電車は時間通りに発車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train pulled out on time.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">バスは<span class="fg"><ruby>発<rt>はっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>するところだった。</div><button type="button" class="play" data-say="バスは発車するところだった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The bus was about to start.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>下<rt>げ</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">げしゃ</span><button type="button" class="play" data-say="げしゃ" aria-label="Play 下車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">alighting (from a train, bus, etc.); getting off; getting out (of a car)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>次<rt>つぎ</rt></ruby></span>の<span class="fg"><ruby>駅<rt>えき</rt></ruby></span>で<span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>します。</div><button type="button" class="play" data-say="次の駅で下車します。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I am getting off at the next station.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">シカゴで<span class="fg"><ruby>途<rt>と</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>できますか。</div><button type="button" class="play" data-say="シカゴで途中下車できますか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Can I stop over in Chicago?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">この<span class="fg"><ruby>切<rt>きっ</rt></ruby></span><span class="fg"><ruby>符<rt>ぷ</rt></ruby></span>は<span class="fg"><ruby>途<rt>と</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>できます。</div><button type="button" class="play" data-say="この切符は途中下車できます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This ticket allows you to stop over at any station.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>次<rt>つぎ</rt></ruby></span>の<span class="fg"><ruby>駅<rt>えき</rt></ruby></span>で<span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>します。</div><button type="button" class="play" data-say="次の駅で下車します。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I am getting off at the next station.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">シカゴで<span class="fg"><ruby>途<rt>と</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>できますか。</div><button type="button" class="play" data-say="シカゴで途中下車できますか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Can I stop over in Chicago?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">この<span class="fg"><ruby>切<rt>きっ</rt></ruby></span><span class="fg"><ruby>符<rt>ぷ</rt></ruby></span>は<span class="fg"><ruby>途<rt>と</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span><span class="fg"><ruby>下<rt>げ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>できます。</div><button type="button" class="play" data-say="この切符は途中下車できます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This ticket allows you to stop over at any station.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>庫<rt>こ</rt></ruby></span></span><span class="wr"><span lang="ja">しゃこ</span><button type="button" class="play" data-say="しゃこ" aria-label="Play 車庫"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">garage; carport; depot (for trains, buses, etc.)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">これは<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>の<span class="fg"><ruby>鍵<rt>かぎ</rt></ruby></span>よ。</div><button type="button" class="play" data-say="これは車庫の鍵よ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This is the key to the garage.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>は<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>にあります。</div><button type="button" class="play" data-say="車は車庫にあります。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car is in the garage.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>のドアが<span class="fg"><ruby>開<rt>ひら</rt></ruby></span>いてる。</div><button type="button" class="play" data-say="車庫のドアが開いてる。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The garage door is open.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja">これは<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>の<span class="fg"><ruby>鍵<rt>かぎ</rt></ruby></span>よ。</div><button type="button" class="play" data-say="これは車庫の鍵よ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This is the key to the garage.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>は<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>にあります。</div><button type="button" class="play" data-say="車は車庫にあります。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car is in the garage.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>庫<rt>こ</rt></ruby></span>のドアが<span class="fg"><ruby>開<rt>ひら</rt></ruby></span>いてる。</div><button type="button" class="play" data-say="車庫のドアが開いてる。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The garage door is open.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>乗<rt>じょう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">じょうしゃ</span><button type="button" class="play" data-say="じょうしゃ" aria-label="Play 乗車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">boarding (a train, bus, etc.); getting into (e.g. a taxi)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">ご<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>願<rt>ねが</rt></ruby></span>います！</div><button type="button" class="play" data-say="ご乗車願います！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">All aboard!</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>券<rt>けん</rt></ruby></span>が<span class="fg"><ruby>見<rt>み</rt></ruby></span>つからない。</div><button type="button" class="play" data-say="乗車券が見つからない。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I can&#x27;t find my ticket.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">ご<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>ありがとうございます。</div><button type="button" class="play" data-say="ご乗車ありがとうございます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Welcome aboard!</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja">ご<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>願<rt>ねが</rt></ruby></span>います！</div><button type="button" class="play" data-say="ご乗車願います！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">All aboard!</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>券<rt>けん</rt></ruby></span>が<span class="fg"><ruby>見<rt>み</rt></ruby></span>つからない。</div><button type="button" class="play" data-say="乗車券が見つからない。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I can&#x27;t find my ticket.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>券<rt>けん</rt></ruby></span>を<span class="fg"><ruby>売<rt>う</rt></ruby></span>っている<span class="fg"><ruby>窓<rt>まど</rt></ruby></span><span class="fg"><ruby>口<rt>ぐち</rt></ruby></span>はどこですか。</div><button type="button" class="play" data-say="乗車券を売っている窓口はどこですか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Where is the ticket-selling window?</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>掌<rt>しょう</rt></ruby></span></span><span class="wr"><span lang="ja">しゃしょう</span><button type="button" class="play" data-say="しゃしょう" aria-label="Play 車掌"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">(train) conductor</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>さん。<span class="fg"><ruby>次<rt>つぎ</rt></ruby></span>の<span class="fg"><ruby>町<rt>まち</rt></ruby></span>ってどこですか？</div><button type="button" class="play" data-say="車掌さん。次の町ってどこですか？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Say, Conductor! What&#x27;s the next town?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>大人<rt>おとな</rt></ruby></span>になったら、<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>になりたい。</div><button type="button" class="play" data-say="大人になったら、車掌になりたい。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">When I grow up, I want to be a train conductor.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">オレンジカードは<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>が<span class="fg"><ruby>販<rt>はん</rt></ruby></span><span class="fg"><ruby>売<rt>ばい</rt></ruby></span>している。</div><button type="button" class="play" data-say="オレンジカードは車掌が販売している。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">&quot;Orange Cards&quot; are available from the conductor.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>さん。<span class="fg"><ruby>次<rt>つぎ</rt></ruby></span>の<span class="fg"><ruby>町<rt>まち</rt></ruby></span>ってどこですか？</div><button type="button" class="play" data-say="車掌さん。次の町ってどこですか？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Say, Conductor! What&#x27;s the next town?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>大人<rt>おとな</rt></ruby></span>になったら、<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>になりたい。</div><button type="button" class="play" data-say="大人になったら、車掌になりたい。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">When I grow up, I want to be a train conductor.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">バスの<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>掌<rt>しょう</rt></ruby></span>は<span class="fg"><ruby>彼<rt>かの</rt></ruby></span><span class="fg"><ruby>女<rt>じょ</rt></ruby></span>に、<span class="fg"><ruby>料<rt>りょう</rt></ruby></span><span class="fg"><ruby>金<rt>きん</rt></ruby></span>を<span class="fg"><ruby>払<rt>はら</rt></ruby></span>えないので<span class="fg"><ruby>降<rt>お</rt></ruby></span>りるようにと<span class="fg"><ruby>言<rt>い</rt></ruby></span>った。</div><button type="button" class="play" data-say="バスの車掌は彼女に、料金を払えないので降りるようにと言った。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The bus conductor told her to get off because she could not pay the fare.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>輪<rt>りん</rt></ruby></span></span><span class="wr"><span lang="ja">しゃりん</span><button type="button" class="play" data-say="しゃりん" aria-label="Play 車輪"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">(vehicle) wheel</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>が<span class="fg"><ruby>回<rt>まわ</rt></ruby></span>りだした。</div><button type="button" class="play" data-say="車輪が回りだした。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The wheel began to turn.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>は<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>軸<rt>じく</rt></ruby></span>で<span class="fg"><ruby>回<rt>かい</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span>する。</div><button type="button" class="play" data-say="車輪は車軸で回転する。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Wheels turn on axles.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>はぐるぐる<span class="fg"><ruby>回<rt>まわ</rt></ruby></span>った。</div><button type="button" class="play" data-say="車輪はぐるぐる回った。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The wheels turned around.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>が<span class="fg"><ruby>回<rt>まわ</rt></ruby></span>りだした。</div><button type="button" class="play" data-say="車輪が回りだした。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The wheel began to turn.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>くるま</rt></ruby></span>の<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>の１つがはずれた。</div><button type="button" class="play" data-say="車の車輪の１つがはずれた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">One of the car wheels came off.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>自<rt>じ</rt></ruby></span><span class="fg"><ruby>動<rt>どう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>には<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>輪<rt>りん</rt></ruby></span>が４<span class="fg"><ruby>個<rt>こ</rt></ruby></span>ある。</div><button type="button" class="play" data-say="自動車には車輪が４個ある。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">An automobile has four wheels.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>停<rt>てい</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">ていしゃ</span><button type="button" class="play" data-say="ていしゃ" aria-label="Play 停車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">stopping (of a train, car, etc.); stop</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">バスは<span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="バスは急停車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The bus stopped sharply.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">その<span class="fg"><ruby>車<rt>くるま</rt></ruby></span>は<span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="その車は急停車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car came to an abrupt stop.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">これは<span class="fg"><ruby>各<rt>かく</rt></ruby></span><span class="fg"><ruby>駅<rt>えき</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>です。</div><button type="button" class="play" data-say="これは各駅停車です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">This is just the milk run.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja">バスは<span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="バスは急停車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The bus stopped sharply.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">その<span class="fg"><ruby>車<rt>くるま</rt></ruby></span>は<span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="その車は急停車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The car came to an abrupt stop.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>列<rt>れっ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>一<rt>いっ</rt></ruby></span><span class="fg"><ruby>旦<rt>たん</rt></ruby></span><span class="fg"><ruby>停<rt>てい</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>した。</div><button type="button" class="play" data-say="列車は一旦停車した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The train stopped for a moment.</div></li></ul></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>歯<rt>は</rt></ruby></span><span><ruby>車<rt>ぐるま</rt></ruby></span></span><span class="wr"><span lang="ja">はぐるま</span><button type="button" class="play" data-say="はぐるま" aria-label="Play 歯車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">gear; cogwheel</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>歯<rt>は</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>がかみ<span class="fg"><ruby>合<rt>あ</rt></ruby></span>っている。</div><button type="button" class="play" data-say="歯車がかみ合っている。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The cog-wheels are in gear.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">ここの<span class="fg"><ruby>小<rt>ちい</rt></ruby></span>さな<span class="fg"><ruby>歯<rt>は</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>がないんだ。</div><button type="button" class="play" data-say="ここの小さな歯車がないんだ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">A small gear is missing here.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>最<rt>さい</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>まで<span class="fg"><ruby>議<rt>ぎ</rt></ruby></span><span class="fg"><ruby>論<rt>ろん</rt></ruby></span>の<span class="fg"><ruby>歯<rt>は</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>が<span class="fg"><ruby>噛み合<rt>かみあ</rt></ruby></span>わなかった。</div><button type="button" class="play" data-say="最後まで議論の歯車が噛み合わなかった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">We were arguing on different planes to the last.</div></li></ul><p class="none ph-lvl">No example phrases at exactly N2.</p></details></div><div class="word" data-level="N2"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>機<rt>き</rt></ruby></span><span><ruby>関<rt>かん</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">きかんしゃ</span><button type="button" class="play" data-say="きかんしゃ" aria-label="Play 機関車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N2</span></span></div><div class="word-en">locomotive; engine</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>蒸<rt>じょう</rt></ruby></span><span class="fg"><ruby>気<rt>き</rt></ruby></span><span class="fg"><ruby>機<rt>き</rt></ruby></span><span class="fg"><ruby>関<rt>かん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>に<span class="fg"><ruby>取<rt>と</rt></ruby></span>って<span class="fg"><ruby>代<rt>か</rt></ruby></span>わられた。</div><button type="button" class="play" data-say="蒸気機関車は電車に取って代わられた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Steam trains were replaced by electric trains.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>蒸<rt>じょう</rt></ruby></span><span class="fg"><ruby>気<rt>き</rt></ruby></span><span class="fg"><ruby>機<rt>き</rt></ruby></span><span class="fg"><ruby>関<rt>かん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>ほどなめらかには<span class="fg"><ruby>走<rt>はし</rt></ruby></span>らない。</div><button type="button" class="play" data-say="蒸気機関車は電車ほどなめらかには走らない。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Steam locomotives run less smoothly than electric trains.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>機<rt>き</rt></ruby></span><span class="fg"><ruby>関<rt>かん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>長<rt>なが</rt></ruby></span>い<span class="fg"><ruby>貨<rt>か</rt></ruby></span><span class="fg"><ruby>物<rt>もつ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>の<span class="fg"><ruby>列<rt>れつ</rt></ruby></span>を<span class="fg"><ruby>引っ張<rt>ひっぱ</rt></ruby></span>って<span class="fg"><ruby>走<rt>はし</rt></ruby></span>っていた。</div><button type="button" class="play" data-say="機関車は長い貨物車の列を引っ張って走っていた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The locomotive was pulling a long line of freight cars.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>蒸<rt>じょう</rt></ruby></span><span class="fg"><ruby>気<rt>き</rt></ruby></span><span class="fg"><ruby>機<rt>き</rt></ruby></span><span class="fg"><ruby>関<rt>かん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>に<span class="fg"><ruby>取<rt>と</rt></ruby></span>って<span class="fg"><ruby>代<rt>か</rt></ruby></span>わられた。</div><button type="button" class="play" data-say="蒸気機関車は電車に取って代わられた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Steam trains were replaced by electric trains.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>機<rt>き</rt></ruby></span><span class="fg"><ruby>関<rt>かん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>は<span class="fg"><ruby>長<rt>なが</rt></ruby></span>い<span class="fg"><ruby>貨<rt>か</rt></ruby></span><span class="fg"><ruby>物<rt>もつ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>の<span class="fg"><ruby>列<rt>れつ</rt></ruby></span>を<span class="fg"><ruby>引っ張<rt>ひっぱ</rt></ruby></span>って<span class="fg"><ruby>走<rt>はし</rt></ruby></span>っていた。</div><button type="button" class="play" data-say="機関車は長い貨物車の列を引っ張って走っていた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The locomotive was pulling a long line of freight cars.</div></li></ul></details></div><div class="word" data-level="N1"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>風<rt>かざ</rt></ruby></span><span><ruby>車<rt>ぐるま</rt></ruby></span></span><span class="wr"><span lang="ja">かざぐるま</span><button type="button" class="play" data-say="かざぐるま" aria-label="Play 風車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv">N1</span></span></div><div class="word-en">windmill; wind turbine</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">オランダでは、どこへ<span class="fg"><ruby>行<rt>い</rt></ruby></span>っても<span class="fg"><ruby>風<rt>かざ</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>が<span class="fg"><ruby>見<rt>み</rt></ruby></span>られる。</div><button type="button" class="play" data-say="オランダでは、どこへ行っても風車が見られる。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Go where you will in Holland, you will see windmills.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">オランダを<span class="fg"><ruby>訪<rt>ほう</rt></ruby></span><span class="fg"><ruby>問<rt>もん</rt></ruby></span>するまで、<span class="fg"><ruby>風<rt>かざ</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>を<span class="fg"><ruby>見<rt>み</rt></ruby></span>たことがなかった。</div><button type="button" class="play" data-say="オランダを訪問するまで、風車を見たことがなかった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">I had never seen a windmill until I visited the Netherlands.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja">オランダでは、どこへ<span class="fg"><ruby>行<rt>い</rt></ruby></span>っても<span class="fg"><ruby>風<rt>かざ</rt></ruby></span><span class="fg"><ruby>車<rt>ぐるま</rt></ruby></span>が<span class="fg"><ruby>見<rt>み</rt></ruby></span>られる。</div><button type="button" class="play" data-say="オランダでは、どこへ行っても風車が見られる。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Go where you will in Holland, you will see windmills.</div></li></ul></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>乗<rt>じょう</rt></ruby></span><span><ruby>用<rt>よう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">じょうようしゃ</span><button type="button" class="play" data-say="じょうようしゃ" aria-label="Play 乗用車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">(passenger) car; automobile</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">トラックが<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>用<rt>よう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>にぶつかりました。</div><button type="button" class="play" data-say="トラックが乗用車にぶつかりました。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The truck hit a car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>大<rt>おお</rt></ruby></span>きな<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>用<rt>よう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>止<rt>と</rt></ruby></span>まり、<span class="fg"><ruby>背<rt>せ</rt></ruby></span>の<span class="fg"><ruby>高<rt>たか</rt></ruby></span>い<span class="fg"><ruby>女<rt>じょ</rt></ruby></span><span class="fg"><ruby>性<rt>せい</rt></ruby></span>が<span class="fg"><ruby>降<rt>お</rt></ruby></span>りた。</div><button type="button" class="play" data-say="大きな乗用車が止まり、背の高い女性が降りた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">A big car drew up and a tall lady got out.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>両<rt>りょう</rt></ruby></span></span><span class="wr"><span lang="ja">しゃりょう</span><button type="button" class="play" data-say="しゃりょう" aria-label="Play 車両"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">(wheeled) vehicle; car; (railroad) car</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">トムは<span class="fg"><ruby>警<rt>けい</rt></ruby></span><span class="fg"><ruby>察<rt>さつ</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>両<rt>りょう</rt></ruby></span>を<span class="fg"><ruby>盗<rt>ぬす</rt></ruby></span>んだ。</div><button type="button" class="play" data-say="トムは警察車両を盗んだ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Tom stole a police car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">どの<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>両<rt>りょう</rt></ruby></span>がすいていますか。</div><button type="button" class="play" data-say="どの車両がすいていますか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Which car is less crowded?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>試<rt>し</rt></ruby></span><span class="fg"><ruby>運<rt>うん</rt></ruby></span><span class="fg"><ruby>転<rt>てん</rt></ruby></span>では<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>両<rt>りょう</rt></ruby></span>はみんなうまく<span class="fg"><ruby>動<rt>うご</rt></ruby></span>いた。</div><button type="button" class="play" data-say="試運転では車両はみんなうまく動いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">All the vehicles behaved well on their test runs.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>輌<rt>りょう</rt></ruby></span></span><span class="wr"><span lang="ja">しゃりょう</span><button type="button" class="play" data-say="しゃりょう" aria-label="Play 車輌"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">(wheeled) vehicle; car; (railroad) car</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><p class="none ph-all">No example phrases.</p><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>戦<rt>せん</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">せんしゃ</span><button type="button" class="play" data-say="せんしゃ" aria-label="Play 戦車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">tank (military vehicle)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>朝<rt>あさ</rt></ruby></span><span class="fg"><ruby>早<rt>はや</rt></ruby></span>くに、<span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>戦<rt>せん</rt></ruby></span>は<span class="fg"><ruby>始<rt>はじ</rt></ruby></span>まった。</div><button type="button" class="play" data-say="朝早くに、戦車戦は始まった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Early in the morning, the tank battle began.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>早<rt>そう</rt></ruby></span><span class="fg"><ruby>朝<rt>ちょう</rt></ruby></span>、<span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>による<span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>闘<rt>とう</rt></ruby></span>が<span class="fg"><ruby>始<rt>はじ</rt></ruby></span>まった。</div><button type="button" class="play" data-say="早朝、戦車による戦闘が始まった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Early in the morning, the tank battle began.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>らは<span class="fg"><ruby>戦<rt>せん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>と<span class="fg"><ruby>銃<rt>じゅう</rt></ruby></span><span class="fg"><ruby>器<rt>き</rt></ruby></span>でその<span class="fg"><ruby>国<rt>くに</rt></ruby></span>を<span class="fg"><ruby>侵<rt>しん</rt></ruby></span><span class="fg"><ruby>略<rt>りゃく</rt></ruby></span>した。</div><button type="button" class="play" data-say="彼らは戦車と銃器でその国を侵略した。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">They invaded the country with tanks and guns.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>拍<rt>はく</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">はくしゃ</span><button type="button" class="play" data-say="はくしゃ" aria-label="Play 拍車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">(riding) spur</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>円<rt>えん</rt></ruby></span><span class="fg"><ruby>高<rt>だか</rt></ruby></span>がその<span class="fg"><ruby>会<rt>かい</rt></ruby></span><span class="fg"><ruby>社<rt>しゃ</rt></ruby></span>の<span class="fg"><ruby>経<rt>けい</rt></ruby></span><span class="fg"><ruby>営<rt>えい</rt></ruby></span><span class="fg"><ruby>不<rt>ふ</rt></ruby></span><span class="fg"><ruby>振<rt>しん</rt></ruby></span>に<span class="fg"><ruby>拍<rt>はく</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>をかけた。</div><button type="button" class="play" data-say="円高がその会社の経営不振に拍車をかけた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The yen&#x27;s appreciation accelerated the decline of that company.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>教<rt>きょう</rt></ruby></span><span class="fg"><ruby>育<rt>いく</rt></ruby></span>にもっとお<span class="fg"><ruby>金<rt>かね</rt></ruby></span>をかければ、<span class="fg"><ruby>経<rt>けい</rt></ruby></span><span class="fg"><ruby>済<rt>ざい</rt></ruby></span><span class="fg"><ruby>成<rt>せい</rt></ruby></span><span class="fg"><ruby>長<rt>ちょう</rt></ruby></span>に<span class="fg"><ruby>拍<rt>はく</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>がかかるだろう。</div><button type="button" class="play" data-say="教育にもっとお金をかければ、経済成長に拍車がかかるだろう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">More money for education will spur economic growth.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>新<rt>しん</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">しんしゃ</span><button type="button" class="play" data-say="しんしゃ" aria-label="Play 新車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">new car</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">それって<span class="fg"><ruby>新<rt>しん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>？</div><button type="button" class="play" data-say="それって新車？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is that a new car?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">これ、<span class="fg"><ruby>新<rt>しん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>なの？</div><button type="button" class="play" data-say="これ、新車なの？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Is this a new car?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>僕<rt>ぼく</rt></ruby></span>の<span class="fg"><ruby>新<rt>しん</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>を<span class="fg"><ruby>見<rt>み</rt></ruby></span>ろよ。</div><button type="button" class="play" data-say="僕の新車を見ろよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Look at my new car.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>内<rt>ない</rt></ruby></span></span><span class="wr"><span lang="ja">しゃない</span><button type="button" class="play" data-say="しゃない" aria-label="Play 車内"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">inside a car (train, bus, etc.)</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>氷<rt>こおり</rt></ruby></span>のような<span class="fg"><ruby>冷<rt>れい</rt></ruby></span><span class="fg"><ruby>気<rt>き</rt></ruby></span>が<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>内<rt>ない</rt></ruby></span>に<span class="fg"><ruby>忍び込<rt>しのびこ</rt></ruby></span>んできた。</div><button type="button" class="play" data-say="氷のような冷気が車内に忍び込んできた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">An icy chill stole into the car.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>内<rt>ない</rt></ruby></span>の<span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>の<span class="fg"><ruby>周<rt>まわ</rt></ruby></span>りでは、ほかの<span class="fg"><ruby>乗<rt>じょう</rt></ruby></span><span class="fg"><ruby>客<rt>きゃく</rt></ruby></span>たちが<span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span><span class="fg"><ruby>左<rt>さ</rt></ruby></span><span class="fg"><ruby>右<rt>ゆう</rt></ruby></span>に<span class="fg"><ruby>揺<rt>ゆ</rt></ruby></span>れていた。</div><button type="button" class="play" data-say="車内の彼の周りでは、ほかの乗客たちが前後左右に揺れていた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Around him in the carriage, the other passengers rocked and swayed.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>混<rt>こ</rt></ruby></span>んでいるバスの<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>内<rt>ない</rt></ruby></span>では、<span class="fg"><ruby>若<rt>わか</rt></ruby></span><span class="fg"><ruby>者<rt>もの</rt></ruby></span>はお<span class="fg"><ruby>年<rt>とし</rt></ruby></span><span class="fg"><ruby>寄<rt>よ</rt></ruby></span>りに<span class="fg"><ruby>席<rt>せき</rt></ruby></span>を<span class="fg"><ruby>譲<rt>ゆず</rt></ruby></span>るべきだ。</div><button type="button" class="play" data-say="混んでいるバスの車内では、若者はお年寄りに席を譲るべきだ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">On crowded buses, young people should give their seats to old people.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>種<rt>しゅ</rt></ruby></span></span><span class="wr"><span lang="ja">しゃしゅ</span><button type="button" class="play" data-say="しゃしゅ" aria-label="Play 車種"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">car model</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>社<rt>しゃ</rt></ruby></span><span class="fg"><ruby>長<rt>ちょう</rt></ruby></span>さんの<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>種<rt>しゅ</rt></ruby></span>と<span class="fg"><ruby>色<rt>いろ</rt></ruby></span>は？</div><button type="button" class="play" data-say="社長さんの車種と色は？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The colour and make of the president&#x27;s car are?</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>救<rt>きゅう</rt></ruby></span><span><ruby>急<rt>きゅう</rt></ruby></span><span><ruby>車<rt>しゃ</rt></ruby></span></span><span class="wr"><span lang="ja">きゅうきゅうしゃ</span><button type="button" class="play" data-say="きゅうきゅうしゃ" aria-label="Play 救急車"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">ambulance</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>救<rt>きゅう</rt></ruby></span><span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>を<span class="fg"><ruby>呼<rt>よ</rt></ruby></span>んで！</div><button type="button" class="play" data-say="救急車を呼んで！" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">Call an ambulance.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>救<rt>きゅう</rt></ruby></span><span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>が<span class="fg"><ruby>来<rt>き</rt></ruby></span>たぞ。</div><button type="button" class="play" data-say="救急車が来たぞ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The ambulance has just arrived.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>救<rt>きゅう</rt></ruby></span><span class="fg"><ruby>急<rt>きゅう</rt></ruby></span><span class="fg"><ruby>車<rt>しゃ</rt></ruby></span>、<span class="fg"><ruby>来<rt>き</rt></ruby></span>たよ。</div><button type="button" class="play" data-say="救急車、来たよ。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">The ambulance has arrived.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>車<rt>しゃ</rt></ruby></span><span><ruby>体<rt>たい</rt></ruby></span></span><span class="wr"><span lang="ja">しゃたい</span><button type="button" class="play" data-say="しゃたい" aria-label="Play 車体"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></span></div><span class="lv-wrap"><span class="lv unrated">unrated</span></span></div><div class="word-en">body (of car); frame</div><details class="ph"><summary><span class="icon chev-closed" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span><span class="icon chev-open" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-down">
+<path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja">「<span class="fg"><ruby>車<rt>くるま</rt></ruby></span><span class="fg"><ruby>購<rt>こう</rt></ruby></span><span class="fg"><ruby>入<rt>にゅう</rt></ruby></span>の<span class="fg"><ruby>決<rt>き</rt></ruby></span>め<span class="fg"><ruby>手<rt>て</rt></ruby></span>となったのは、ズバリ<span class="fg"><ruby>何<rt>なん</rt></ruby></span>ですか？」「<span class="fg"><ruby>車<rt>しゃ</rt></ruby></span><span class="fg"><ruby>体<rt>たい</rt></ruby></span>の<span class="fg"><ruby>曲<rt>きょく</rt></ruby></span><span class="fg"><ruby>線<rt>せん</rt></ruby></span><span class="fg"><ruby>美<rt>び</rt></ruby></span>に<span class="fg"><ruby>惚<rt>ほ</rt></ruby></span>れました！」</div><button type="button" class="play" data-say="「車購入の決め手となったのは、ズバリ何ですか？」「車体の曲線美に惚れました！」" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button></div><div class="ph-en">&quot;What exactly made you decide to buy the car?&quot; &quot;I fell in love with those beautiful curves along its body!&quot;</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div></div></details>
+</div>
+</article>
+<nav class="deck-nav" aria-label="Cards"><a class="nav-btn nav-back" href="%E9%A3%9F.html" aria-label="Back: 食"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span>Back</a><a class="nav-btn nav-next" href="%E4%BD%95.html" aria-label="Next: 何">Next<span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span></a></nav>
+</main><script>
+(() => {
+  const { deck, kanji } = document.body.dataset;
+  if (deck) { try { localStorage.setItem("last:" + deck, kanji); localStorage.setItem("seen:" + kanji, "1"); } catch {} }
+})();
+(() => {
+  const key = k => "learned:" + k;
+  const read = k => { try { return localStorage.getItem(key(k)) === "1"; } catch { return false; } };
+  const write = (k, on) => { try { on ? localStorage.setItem(key(k), "1") : localStorage.removeItem(key(k)); } catch {} };
+  const show = (b, on) => {
+    const tip = on ? "Mark as not learned" : "Mark as learned";
+    b.setAttribute("aria-pressed", on); b.dataset.tip = tip; b.setAttribute("aria-label", tip);
+  };
+  for (const b of document.querySelectorAll(".learn")) {
+    show(b, read(b.dataset.kanji));
+    b.addEventListener("click", () => {
+      const on = b.getAttribute("aria-pressed") !== "true";
+      write(b.dataset.kanji, on); show(b, on);
+    });
+  }
+})();
+(() => {
+  const s = window.speechSynthesis;
+  if (!s) return;
+  let voice = null;
+  const pick = () => {
+    voice = s.getVoices().find(v => /^ja/i.test(v.lang)) || null;
+    document.documentElement.classList.toggle("tts", !!voice);
+  };
+  pick();
+  s.addEventListener("voiceschanged", pick);
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".play");
+    if (!b || !voice) return;
+    s.cancel();
+    const u = new SpeechSynthesisUtterance(b.dataset.say);
+    u.lang = "ja-JP"; u.voice = voice; u.rate = 0.9;
+    s.speak(u);
+  });
+})();
+</script></body></html>
