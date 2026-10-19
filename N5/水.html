@@ -120,30 +120,41 @@ ul.phrases li { display:flex; flex-direction:column; gap:2px; }
 .nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
            background:var(--card); color:var(--brand); box-shadow:var(--shadow);
            font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
-.nav-btn:hover { background:var(--brand-soft); }
 .nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
 .nav-back .icon { transform:scaleX(-1); }
-.close-btn, .back-btn, .continue-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+.close-btn, .back-btn, .continue-btn, .quiz-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
 /* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
 .bar-row { display:flex; align-items:center; gap:12px; }
 .bar-row .progress { flex:1; }
-.continue-btn { position:relative; }
-.continue-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+.continue-btn, .quiz-btn { position:relative; border:0; cursor:pointer; font:inherit; }
+.continue-btn::after, .quiz-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
                        background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
                        padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
-.continue-btn:hover::after, .continue-btn:focus-visible::after { opacity:1; }
+.continue-btn:hover::after, .continue-btn:focus-visible::after,
+.quiz-btn:hover::after, .quiz-btn:focus-visible::after { opacity:1; }
+/* "Coming soon" dialog */
+.soon-dialog { width:calc(100% - 32px); max-width:320px; padding:28px 24px 24px; border:0; border-radius:20px;
+               background:var(--card); color:var(--ink); box-shadow:var(--shadow); text-align:center; }
+.soon-dialog::backdrop { background:rgba(26,20,77,.35); }
+.sd-icon { display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px;
+           border-radius:999px; background:var(--brand-soft); }
+.sd-title { margin:12px 0 4px; font-size:18px; font-weight:700; color:var(--ink); }
+.sd-text { margin:0; font-size:14px; color:var(--muted); }
+.sd-btn { margin-top:20px; height:40px; padding:0 24px; border:0; border-radius:999px; background:var(--pick);
+          color:var(--pick-ink); font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+.sd-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
 
 /* Main page: one card per JLPT level */
 .decks { display:flex; flex-direction:column; gap:12px; }
 .deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
+             border:2px solid transparent;
              text-decoration:none; color:var(--ink); box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
-a.deck-card:hover { background:var(--brand-soft); }
+a.deck-card:hover { border-color:var(--hover-line); } /* same as kanji rows and tiles */
 a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
             border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
-a.deck-card:hover .dc-level { background:var(--card); }
 .dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
 .dc-title { font-size:17px; font-weight:700; }
 .dc-meta { font-size:13px; color:var(--muted); }
@@ -208,7 +219,7 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <body data-deck="N5" data-kanji="水"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="53" aria-label="Card 53 of 79"><div class="progress-legend"><span>53 / 79</span><span>67%</span></div><div class="progress-track"><div class="progress-fill" style="width:67%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
 <header><button type="button" class="learn" data-kanji="水" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">水</div>
 <div class="info"><span class="lv">N5</span><div class="meaning">water</div>
-<div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">スイ</span><span class="ro">sui</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">みず</span><span class="ro">mizu</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">みず-</span><span class="ro">mizu</span></span></div></div></div></header>
+<div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">スイ</span><span class="ro">sui</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">みず</span><span class="ro">mizu</span></span></div></div></div></header>
 <div class="sections">
 <details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="chevron-down">
