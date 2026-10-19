@@ -5,12 +5,12 @@
 :root { --bg:#eae6f7; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
         --brand:#261c76; --brand-soft:#eae6f7; --tag:#e5e5e5; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#261c76; --pick-ink:#fff; --shadow:0 4px 24px rgba(26,20,77,.12);
-        --learn-off:#e5e5e5; --learn-off-hover:#d6d6d6; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; }
+        --learn-off:#e5e5e5; --learn-off-hover:#d6d6d6; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#c9c0ff; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#c9c0ff; --pick-ink:#1a1640; --shadow:0 4px 24px rgba(0,0,0,.4);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; } }
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -18,7 +18,7 @@ body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
 main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
        display:flex; flex-direction:column; justify-content:center; }
 .card { background:var(--card); border-radius:20px; box-shadow:var(--shadow); padding:24px 20px;
-        height:min(90%, calc(100% - 128px)); overflow-y:auto; overscroll-behavior:contain;
+        height:min(90%, calc(100% - 144px)); overflow-y:auto; overscroll-behavior:contain;
         display:flex; flex-direction:column; gap:24px; }
 .card > * { flex:none; }
 .icon { display:inline-flex; flex:none; }
@@ -84,7 +84,6 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
 .lv-wrap { padding-bottom:6px; flex:none; }
 .word-ja { font-size:22.4px; font-weight:700; line-height:1.3; }
-.word-ja rt { font-size:11.2px; font-weight:500; line-height:1.2; }
 .wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
 .word-en { font-size:16px; color:var(--muted); }
 
@@ -100,11 +99,28 @@ ul.phrases li { display:flex; flex-direction:column; gap:2px; }
 .ph-ja { font-size:16.8px; }
 .ph-en { font-size:14.4px; color:var(--muted); }
 
-.fg { cursor:pointer; border-radius:3px; transition:background .12s; }
-.fg rt { visibility:hidden; font-size:.5em; font-weight:500; color:var(--ink); }
-.fg:hover { background:var(--brand-soft); }
-.fg:hover rt { visibility:visible; }
-
+/* Tappable words: light accent highlight on hover, details in the bottom sheet */
+.w { font:inherit; color:inherit; background:none; border:0; padding:0 2px; margin:0 -2px; border-radius:4px;
+     cursor:pointer; transition:background .12s; }
+.w:hover { background:var(--brand-soft); }
+.w:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+.pt { color:var(--particle); } /* particles in phrases: は, が, を, に… */
+.w.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; } /* headwords keep their size as buttons */
+/* Bottom sheet: slides up from the bottom; closes with ×, Esc or a tap outside */
+dialog.sheet { position:fixed; inset:auto 0 0 0; margin:0 auto; padding:0; width:100%; max-width:592px; max-height:85vh;
+               border:0; border-radius:20px 20px 0 0; background:var(--card); color:var(--ink);
+               box-shadow:0 -4px 24px rgba(26,20,77,.12); }
+dialog.sheet[open] { animation:sheet-up .22s ease-out; }
+@keyframes sheet-up { from { transform:translateY(100%); } to { transform:none; } }
+dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
+.sheet-body { position:relative; padding:12px 24px 32px; text-align:center; outline:none; }
+.sheet-handle { display:block; width:40px; height:4px; margin:0 auto; border-radius:2px; background:var(--brand-soft); }
+.sheet-close { position:absolute; top:12px; right:12px; border:0; box-shadow:none; background:var(--brand-soft); cursor:pointer; }
+.sheet-word { margin:24px 0 4px; font-size:44px; font-weight:700; line-height:1.5; }
+.sheet-word rt { font-size:16px; font-weight:500; color:var(--muted); }
+.sheet-meaning { margin:0 0 20px; font-size:16px; color:var(--muted); }
+.sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--brand-soft); }
+.sheet .play svg { width:20px; height:20px; }
 .play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
 .tts .play { display:inline-flex; }
 .play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
@@ -116,13 +132,16 @@ ul.phrases li { display:flex; flex-direction:column; gap:2px; }
                    letter-spacing:.02em; color:var(--brand); }
 .progress-track { height:6px; border-radius:999px; background:var(--card); overflow:hidden; }
 .progress-fill { height:100%; border-radius:999px; background:var(--brand); }
-.deck-nav { flex:none; display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+.deck-nav { flex:none; display:flex; justify-content:center; gap:24px; margin-top:16px; }
 .nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
            background:var(--card); color:var(--brand); box-shadow:var(--shadow);
            font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
 .nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
 .nav-back .icon { transform:scaleX(-1); }
+/* Back / Next: round, icon only; 44px keeps them an easy touch target on phones */
+.nav-back, .nav-next { width:44px; padding:0; justify-content:center; }
+.nav-back svg, .nav-next svg { width:14px; height:14px; }
 .close-btn, .back-btn, .continue-btn, .quiz-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
 /* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
 .bar-row { display:flex; align-items:center; gap:12px; }
@@ -170,7 +189,7 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 .deck-card.soon { opacity:.5; box-shadow:none; }
 
 /* Deck page */
-body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
+body.deck-page main { height:auto; display:block; padding:16px; }
 .deck-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; }
 .deck-head h1 { font-size:24px; line-height:1.3; margin:0; color:var(--ink); }
 .deck-bars { display:flex; flex-direction:column; gap:14px; padding-top:8px; margin-bottom:24px; }
@@ -230,7 +249,7 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="chevron-down">
 <path id="Vector" d="M2.5 3.75L5 6.25L7.5 3.75" stroke-width="2" stroke-linecap="round" stroke="#261C76"/>
 </g>
-</svg></span><h2>Vocabulary</h2></span><span class="count">5</span></summary><div class="vocab"><div class="picker" role="radiogroup" aria-label="Vocabulary level"><input type="radio" name="lvl" id="lv-all" checked><label for="lv-all">All</label><input type="radio" name="lvl" id="lv-N5"><label for="lv-N5">N5</label><input type="radio" name="lvl" id="lv-N3"><label for="lv-N3">N3</label></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>午<rt>ご</rt></ruby></span><span><ruby>後<rt>ご</rt></ruby></span></span><span class="wr"><span lang="ja">ごご</span><button type="button" class="play" data-say="ごご" aria-label="Play 午後"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span><h2>Vocabulary</h2></span><span class="count">5</span></summary><div class="vocab"><div class="picker" role="radiogroup" aria-label="Vocabulary level"><input type="radio" name="lvl" id="lv-all" checked><label for="lv-all">All</label><input type="radio" name="lvl" id="lv-N5"><label for="lv-N5">N5</label><input type="radio" name="lvl" id="lv-N3"><label for="lv-N3">N3</label></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><button type="button" class="w word-ja" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><span class="wr"><span lang="ja">ごご</span><button type="button" class="play" data-say="ごご" aria-label="Play 午後"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -243,37 +262,37 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="icon/chevron-down">
 <path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span><span class="fg"><ruby>二<rt>に</rt></ruby></span><span class="fg"><ruby>時<rt>じ</rt></ruby></span>です。</div><button type="button" class="play" data-say="午後二時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><button type="button" class="w" data-w="1" lang="ja" aria-haspopup="dialog">二</button><button type="button" class="w" data-w="2" lang="ja" aria-haspopup="dialog">時</button>です。</div><button type="button" class="play" data-say="午後二時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">It&#x27;s two o&#x27;clock in the afternoon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span><span class="fg"><ruby>八<rt>はち</rt></ruby></span><span class="fg"><ruby>時<rt>じ</rt></ruby></span>です。</div><button type="button" class="play" data-say="午後八時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">It&#x27;s two o&#x27;clock in the afternoon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><button type="button" class="w" data-w="3" lang="ja" aria-haspopup="dialog">八</button><button type="button" class="w" data-w="2" lang="ja" aria-haspopup="dialog">時</button>です。</div><button type="button" class="play" data-say="午後八時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">It&#x27;s eight o&#x27;clock at night.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>は<span class="fg"><ruby>休<rt>やす</rt></ruby></span>みだった。</div><button type="button" class="play" data-say="午後は休みだった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">It&#x27;s eight o&#x27;clock at night.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><span class="pt">は</span><button type="button" class="w" data-w="4" lang="ja" aria-haspopup="dialog">休み</button>だった。</div><button type="button" class="play" data-say="午後は休みだった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">We had the afternoon off.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>は<span class="fg"><ruby>休<rt>やす</rt></ruby></span>みだった。</div><button type="button" class="play" data-say="午後は休みだった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">We had the afternoon off.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><span class="pt">は</span><button type="button" class="w" data-w="4" lang="ja" aria-haspopup="dialog">休み</button>だった。</div><button type="button" class="play" data-say="午後は休みだった。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">We had the afternoon off.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>はどうだった？</div><button type="button" class="play" data-say="午後はどうだった？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">We had the afternoon off.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><span class="pt">は</span><button type="button" class="w" data-w="5" lang="ja" aria-haspopup="dialog">どう</button>だった？</div><button type="button" class="play" data-say="午後はどうだった？" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">How was your afternoon?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>今日<rt>きょう</rt></ruby></span>の<span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>後<rt>ご</rt></ruby></span>は<span class="fg"><ruby>暇<rt>ひま</rt></ruby></span>ですか。</div><button type="button" class="play" data-say="今日の午後は暇ですか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">How was your afternoon?</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="6" lang="ja" aria-haspopup="dialog">今日</button><span class="pt">の</span><button type="button" class="w" data-w="0" lang="ja" aria-haspopup="dialog">午後</button><span class="pt">は</span><button type="button" class="w" data-w="7" lang="ja" aria-haspopup="dialog">暇</button>です<span class="pt">か</span>。</div><button type="button" class="play" data-say="今日の午後は暇ですか。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">Are you free this afternoon?</div></li></ul></details></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>午<rt>ご</rt></ruby></span><span><ruby>前<rt>ぜん</rt></ruby></span></span><span class="wr"><span lang="ja">ごぜん</span><button type="button" class="play" data-say="ごぜん" aria-label="Play 午前"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">Are you free this afternoon?</div></li></ul></details></div><div class="word" data-level="N5"><div class="word-head"><div class="wl"><button type="button" class="w word-ja" data-w="8" lang="ja" aria-haspopup="dialog">午前</button><span class="wr"><span lang="ja">ごぜん</span><button type="button" class="play" data-say="ごぜん" aria-label="Play 午前"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -286,37 +305,37 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="icon/chevron-down">
 <path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span>８<span class="fg"><ruby>時<rt>じ</rt></ruby></span>です。</div><button type="button" class="play" data-say="午前８時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>８<button type="button" class="w" data-w="2" lang="ja" aria-haspopup="dialog">時</button>です。</div><button type="button" class="play" data-say="午前８時です。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">It’s 8:00 am.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>に<span class="fg"><ruby>起<rt>お</rt></ruby></span>きた。</div><button type="button" class="play" data-say="彼は午前中に起きた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">It’s 8:00 am.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="9" lang="ja" aria-haspopup="dialog">彼</button><span class="pt">は</span><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>中<span class="pt">に</span><button type="button" class="w" data-w="10" lang="ja" aria-haspopup="dialog">起き</button>た。</div><button type="button" class="play" data-say="彼は午前中に起きた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">He got up in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>は<span class="fg"><ruby>家<rt>いえ</rt></ruby></span>にいます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">He got up in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>中<span class="pt">は</span><button type="button" class="w" data-w="11" lang="ja" aria-haspopup="dialog">家</button><span class="pt">に</span><button type="button" class="w" data-w="12" lang="ja" aria-haspopup="dialog">い</button>ます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>は<span class="fg"><ruby>家<rt>いえ</rt></ruby></span>にいます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>中<span class="pt">は</span><button type="button" class="w" data-w="11" lang="ja" aria-haspopup="dialog">家</button><span class="pt">に</span><button type="button" class="w" data-w="12" lang="ja" aria-haspopup="dialog">い</button>ます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>に<span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>話<rt>わ</rt></ruby></span>しますね。</div><button type="button" class="play" data-say="午前中に電話しますね。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>中<span class="pt">に</span><button type="button" class="w" data-w="13" lang="ja" aria-haspopup="dialog">電話</button><button type="button" class="w" data-w="14" lang="ja" aria-haspopup="dialog">し</button>ます<span class="pt">ね</span>。</div><button type="button" class="play" data-say="午前中に電話しますね。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll give you a call in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>にテストがあるの。</div><button type="button" class="play" data-say="午前中にテストがあるの。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll give you a call in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="8" lang="ja" aria-haspopup="dialog">午前</button>中<span class="pt">に</span><button type="button" class="w" data-w="15" lang="ja" aria-haspopup="dialog">テスト</button><span class="pt">が</span><button type="button" class="w" data-w="16" lang="ja" aria-haspopup="dialog">ある</button><span class="pt">の</span>。</div><button type="button" class="play" data-say="午前中にテストがあるの。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ve got an exam in the morning.</div></li></ul></details></div><div class="word" data-level="N3"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>正<rt>しょう</rt></ruby></span><span><ruby>午<rt>ご</rt></ruby></span></span><span class="wr"><span lang="ja">しょうご</span><button type="button" class="play" data-say="しょうご" aria-label="Play 正午"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ve got an exam in the morning.</div></li></ul></details></div><div class="word" data-level="N3"><div class="word-head"><div class="wl"><button type="button" class="w word-ja" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="wr"><span lang="ja">しょうご</span><button type="button" class="play" data-say="しょうご" aria-label="Play 正午"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -329,37 +348,37 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="icon/chevron-down">
 <path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>まで<span class="fg"><ruby>待<rt>ま</rt></ruby></span>とう。</div><button type="button" class="play" data-say="正午まで待とう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">まで</span><button type="button" class="w" data-w="18" lang="ja" aria-haspopup="dialog">待とう</button>。</div><button type="button" class="play" data-say="正午まで待とう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll wait till noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">ベルは<span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>に<span class="fg"><ruby>鳴<rt>な</rt></ruby></span>る。</div><button type="button" class="play" data-say="ベルは正午に鳴る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll wait till noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="19" lang="ja" aria-haspopup="dialog">ベル</button><span class="pt">は</span><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">に</span><button type="button" class="w" data-w="20" lang="ja" aria-haspopup="dialog">鳴る</button>。</div><button type="button" class="play" data-say="ベルは正午に鳴る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">The bell rings at noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>に<span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>京<rt>きょう</rt></ruby></span>に<span class="fg"><ruby>着<rt>つ</rt></ruby></span>いた。</div><button type="button" class="play" data-say="正午に東京に着いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">The bell rings at noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">に</span>東京<span class="pt">に</span><button type="button" class="w" data-w="21" lang="ja" aria-haspopup="dialog">着い</button>た。</div><button type="button" class="play" data-say="正午に東京に着いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I arrived in Tokyo at noon.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>まで<span class="fg"><ruby>待<rt>ま</rt></ruby></span>とう。</div><button type="button" class="play" data-say="正午まで待とう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I arrived in Tokyo at noon.</div></li></ul><ul class="phrases ph-lvl"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">まで</span><button type="button" class="w" data-w="18" lang="ja" aria-haspopup="dialog">待とう</button>。</div><button type="button" class="play" data-say="正午まで待とう。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll wait till noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja">ベルは<span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>に<span class="fg"><ruby>鳴<rt>な</rt></ruby></span>る。</div><button type="button" class="play" data-say="ベルは正午に鳴る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll wait till noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="19" lang="ja" aria-haspopup="dialog">ベル</button><span class="pt">は</span><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">に</span><button type="button" class="w" data-w="20" lang="ja" aria-haspopup="dialog">鳴る</button>。</div><button type="button" class="play" data-say="ベルは正午に鳴る。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">The bell rings at noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>正<rt>しょう</rt></ruby></span><span class="fg"><ruby>午<rt>ご</rt></ruby></span>に<span class="fg"><ruby>東<rt>とう</rt></ruby></span><span class="fg"><ruby>京<rt>きょう</rt></ruby></span>に<span class="fg"><ruby>着<rt>つ</rt></ruby></span>いた。</div><button type="button" class="play" data-say="正午に東京に着いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">The bell rings at noon.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="17" lang="ja" aria-haspopup="dialog">正午</button><span class="pt">に</span>東京<span class="pt">に</span><button type="button" class="w" data-w="21" lang="ja" aria-haspopup="dialog">着い</button>た。</div><button type="button" class="play" data-say="正午に東京に着いた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I arrived in Tokyo at noon.</div></li></ul></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>午<rt>ひる</rt></ruby></span></span><span class="wr"><span lang="ja">ひる</span><button type="button" class="play" data-say="ひる" aria-label="Play 午"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I arrived in Tokyo at noon.</div></li></ul></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><button type="button" class="w word-ja" data-w="22" lang="ja" aria-haspopup="dialog">午</button><span class="wr"><span lang="ja">ひる</span><button type="button" class="play" data-say="ひる" aria-label="Play 午"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -372,7 +391,7 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="icon/chevron-down">
 <path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Phrases</summary><p class="none ph-all">No example phrases.</p><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><span class="word-ja" lang="ja"><span><ruby>午<rt>ご</rt></ruby></span><span><ruby>前<rt>ぜん</rt></ruby></span><span><ruby>中<rt>ちゅう</rt></ruby></span></span><span class="wr"><span lang="ja">ごぜんちゅう</span><button type="button" class="play" data-say="ごぜんちゅう" aria-label="Play 午前中"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span>Phrases</summary><p class="none ph-all">No example phrases.</p><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div><div class="word" data-level="unrated"><div class="word-head"><div class="wl"><button type="button" class="w word-ja" data-w="23" lang="ja" aria-haspopup="dialog">午前中</button><span class="wr"><span lang="ja">ごぜんちゅう</span><button type="button" class="play" data-say="ごぜんちゅう" aria-label="Play 午前中"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -385,17 +404,17 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 <g id="icon/chevron-down">
 <path id="Vector" d="M1.5 3.5L5 7L8.5 3.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>彼<rt>かれ</rt></ruby></span>は<span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>に<span class="fg"><ruby>起<rt>お</rt></ruby></span>きた。</div><button type="button" class="play" data-say="彼は午前中に起きた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span>Phrases</summary><ul class="phrases ph-all"><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="9" lang="ja" aria-haspopup="dialog">彼</button><span class="pt">は</span><button type="button" class="w" data-w="23" lang="ja" aria-haspopup="dialog">午前中</button><span class="pt">に</span><button type="button" class="w" data-w="10" lang="ja" aria-haspopup="dialog">起き</button>た。</div><button type="button" class="play" data-say="彼は午前中に起きた。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">He got up in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>は<span class="fg"><ruby>家<rt>いえ</rt></ruby></span>にいます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">He got up in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="23" lang="ja" aria-haspopup="dialog">午前中</button><span class="pt">は</span><button type="button" class="w" data-w="11" lang="ja" aria-haspopup="dialog">家</button><span class="pt">に</span><button type="button" class="w" data-w="12" lang="ja" aria-haspopup="dialog">い</button>ます。</div><button type="button" class="play" data-say="午前中は家にいます。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
 </g>
-</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><span class="fg"><ruby>午<rt>ご</rt></ruby></span><span class="fg"><ruby>前<rt>ぜん</rt></ruby></span><span class="fg"><ruby>中<rt>ちゅう</rt></ruby></span>に<span class="fg"><ruby>電<rt>でん</rt></ruby></span><span class="fg"><ruby>話<rt>わ</rt></ruby></span>しますね。</div><button type="button" class="play" data-say="午前中に電話しますね。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></button></div><div class="ph-en">I&#x27;ll be at home in the morning.</div></li><li><div class="ph-row"><div class="ph-ja" lang="ja"><button type="button" class="w" data-w="23" lang="ja" aria-haspopup="dialog">午前中</button><span class="pt">に</span><button type="button" class="w" data-w="13" lang="ja" aria-haspopup="dialog">電話</button><button type="button" class="w" data-w="14" lang="ja" aria-haspopup="dialog">し</button>ます<span class="pt">ね</span>。</div><button type="button" class="play" data-say="午前中に電話しますね。" aria-label="Play phrase"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
 <path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
 <path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
@@ -403,16 +422,48 @@ body.deck-page main { height:auto; display:block; padding:24px 16px 40px; }
 </svg></span></button></div><div class="ph-en">I&#x27;ll give you a call in the morning.</div></li></ul><p class="none ph-lvl">No example phrases at exactly unrated.</p></details></div></div></details>
 </div>
 </article>
-<nav class="deck-nav" aria-label="Cards"><a class="nav-btn nav-back" href="%E5%8C%97.html" aria-label="Back: 北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<nav class="deck-nav" aria-label="Cards"><a class="nav-btn nav-back" href="%E5%8C%97.html" aria-label="Back: 北" title="Back: 北"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="icon/chevron-right">
 <path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span>Back</a><a class="nav-btn nav-next" href="%E7%99%BE.html" aria-label="Next: 百">Next<span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></span></a><a class="nav-btn nav-next" href="%E7%99%BE.html" aria-label="Next: 百" title="Next: 百"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="icon/chevron-right">
 <path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
 </svg></span></a></nav>
-</main><script>
+</main>
+<dialog class="sheet" id="word-sheet" aria-labelledby="sheet-word"><div class="sheet-body" tabindex="-1" autofocus>
+<span class="sheet-handle" aria-hidden="true"></span>
+<button type="button" class="nav-btn close-btn sheet-close" id="sheet-close" aria-label="Close"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></button>
+<p class="sheet-word" id="sheet-word" lang="ja"></p><p class="sheet-meaning" id="sheet-meaning"></p>
+<button type="button" class="play" id="sheet-play" data-say="" aria-label="Play pronunciation"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Audio / Play">
+<path id="Circle" d="M15.3333 8C15.3333 12.0501 12.0501 15.3333 8 15.3333C3.94991 15.3333 0.666667 12.0501 0.666667 8C0.666667 3.94991 3.94991 0.666667 8 0.666667C12.0501 0.666667 15.3333 3.94991 15.3333 8Z" stroke-width="1.33333" stroke="#261C76"/>
+<path id="Play" d="M6.39998 4.66667L11.0667 8L6.39998 11.3333V4.66667Z" fill="#261C76"/>
+</g>
+</svg></span></button>
+</div></dialog>
+<script type="application/json" id="words-data">[{"w": "午後", "r": "ごご", "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}], "m": "afternoon; p.m."}, {"w": "二", "r": "に", "f": [{"text": "二", "reading": "に"}], "m": "two; 2"}, {"w": "時", "r": "じ", "f": [{"text": "時", "reading": "じ"}], "m": "hour; o'clock"}, {"w": "八", "r": "はち", "f": [{"text": "八", "reading": "はち"}], "m": "eight; 8"}, {"w": "休み", "r": "やすみ", "f": [{"text": "休", "reading": "やす"}, {"text": "み"}], "m": "rest; recess; respite"}, {"w": "どう", "r": "どう", "f": [{"text": "どう"}], "m": "how; in what way; how about"}, {"w": "今日", "r": "きょう", "f": [{"text": "今日", "reading": "きょう"}], "m": "today; this day"}, {"w": "暇", "r": "ひま", "f": [{"text": "暇", "reading": "ひま"}], "m": "spare time; free time; leisure"}, {"w": "午前", "r": "ごぜん", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}], "m": "morning; a.m."}, {"w": "彼", "r": "かれ", "f": [{"text": "彼", "reading": "かれ"}], "m": "he; him"}, {"w": "起きる", "r": "おきる", "f": [{"text": "起", "reading": "お"}, {"text": "きる"}], "m": "to get up; to rise; to blaze up (fire)"}, {"w": "家", "r": "いえ", "f": [{"text": "家", "reading": "いえ"}], "m": "house; residence; dwelling"}, {"w": "いる", "r": "いる", "f": [{"text": "いる"}], "m": "to be (of animate objects); to exist"}, {"w": "電話", "r": "でんわ", "f": [{"text": "電", "reading": "でん"}, {"text": "話", "reading": "わ"}], "m": "telephone call; phone call"}, {"w": "する", "r": "する", "f": [{"text": "する"}], "m": "to do; to carry out; to perform"}, {"w": "テスト", "r": "てすと", "f": [{"text": "テスト"}], "m": "test (of ability, knowledge, etc.); exam; examination"}, {"w": "ある", "r": "ある", "f": [{"text": "ある"}], "m": "to be; to exist; to live"}, {"w": "正午", "r": "しょうご", "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}], "m": "noon; midday"}, {"w": "待つ", "r": "まつ", "f": [{"text": "待", "reading": "ま"}, {"text": "つ"}], "m": "to wait"}, {"w": "ベル", "r": "べる", "f": [{"text": "ベル"}], "m": "bell"}, {"w": "鳴る", "r": "なる", "f": [{"text": "鳴", "reading": "な"}, {"text": "る"}], "m": "to sound; to ring; to resound"}, {"w": "着く", "r": "つく", "f": [{"text": "着", "reading": "つ"}, {"text": "く"}], "m": "to arrive at; to reach"}, {"w": "午", "r": "ひる", "f": [{"text": "午", "reading": "ひる"}], "m": "noon; midday"}, {"w": "午前中", "r": "ごぜんちゅう", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}], "m": "in the morning; during the morning"}]</script><script>
+(() => {
+  // Word sheet: tap a word (headword or in a phrase) to see it large with furigana, meaning and audio.
+  const data = JSON.parse(document.getElementById("words-data").textContent);
+  const sheet = document.getElementById("word-sheet");
+  const esc = t => t.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".w");
+    if (!b) return;
+    const w = data[b.dataset.w];
+    document.getElementById("sheet-word").innerHTML = w.f.map(s =>
+      s.reading ? `<ruby>${esc(s.text)}<rt>${esc(s.reading)}</rt></ruby>` : esc(s.text)).join("");
+    document.getElementById("sheet-meaning").textContent = w.m;
+    const play = document.getElementById("sheet-play");
+    play.dataset.say = w.r;
+    play.setAttribute("aria-label", "Play " + w.w);
+    if (sheet.showModal) sheet.showModal(); else alert(w.w + " (" + w.r + "): " + w.m);
+  });
+  document.getElementById("sheet-close").addEventListener("click", () => sheet.close());
+  sheet.addEventListener("click", e => { if (e.target === sheet) sheet.close(); }); // tap outside
+})();
 (() => {
   const { deck, kanji } = document.body.dataset;
   if (deck) { try { localStorage.setItem("last:" + deck, kanji); localStorage.setItem("seen:" + kanji, "1"); } catch {} }
