@@ -78,9 +78,10 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
 .picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
 
-.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;
-        border-bottom:1px solid var(--line); }
-.word:last-of-type { border-bottom:0; }
+.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:16px 0; }
+/* Word and meaning: Light accent line on the left */
+.word-main { align-self:stretch; display:flex; flex-direction:column; gap:4px; padding-left:12px;
+             border-left:3px solid var(--line); }
 .word-head { align-self:stretch; display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
 .wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
 .lv-wrap { padding-bottom:6px; flex:none; }
@@ -88,13 +89,10 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
 .word-en { font-size:16px; color:var(--muted); }
 
-details.ph { align-self:stretch; }
-details.ph > summary { display:flex; align-items:center; gap:8px; padding:2px 0; font-size:13.6px; color:var(--muted); }
-details.ph .chev-open { display:none; }
-details.ph[open] .chev-open { display:inline-flex; }
-details.ph[open] .chev-closed { display:none; }
-ul.phrases { list-style:none; margin:4px 0 0; padding:8px 0 8px 12px; border-left:3px solid var(--line);
-             display:flex; flex-direction:column; gap:16px; }
+details.ph { align-self:stretch; margin-top:6px; border:2px solid var(--light-gray); }
+details.ph > summary { background:var(--light-gray); }
+details.ph .none { margin:0; padding:12px 14px; }
+ul.phrases { list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:16px; }
 /* Phrase and translation on the left; the "i" button has its own column on the right, level with the
    phrase's first line, so the translation never runs underneath it */
 ul.phrases li { display:grid; grid-template-columns:1fr auto; gap:2px 16px; }
