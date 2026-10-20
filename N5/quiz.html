@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N5 kanji quiz</title><style>
+:root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
+        --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
+        --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; --verb:#16aa6f; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
+          --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
+          --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; --verb:#16aa6f; } }
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
+       font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif; }
+main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
+       display:flex; flex-direction:column; justify-content:center; }
+.card { background:var(--card); border-radius:20px; border:1px solid var(--line); padding:24px 20px; box-shadow:var(--soft-shadow);
+        height:min(90%, calc(100% - 144px)); overflow-y:auto; overscroll-behavior:contain;
+        display:flex; flex-direction:column; gap:24px; }
+.card > * { flex:none; }
+.icon { display:inline-flex; flex:none; }
+.icon path[stroke] { stroke:var(--brand); }
+.icon path[fill]:not([fill="none"]) { fill:var(--brand); }
+
+.card > header { position:relative; display:flex; align-items:flex-start; gap:16px; padding-bottom:20px; }
+/* "Learned" toggle: top-right corner, centred on the level badge's row */
+.learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
+         border-radius:50%; cursor:pointer; line-height:0; }
+.learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
+.learn:hover .learn-bg { fill:var(--learn-off-hover); }
+.learn[aria-pressed="false"] { box-shadow:inset 0 0 0 1px var(--line); } /* Light accent ring while unchecked */
+.learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
+.learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
+.learn:hover::after, .learn:focus-visible::after { opacity:1; }
+.kanji { font-size:96px; line-height:1; font-weight:500; }
+.info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
+.meaning { font-size:18px; line-height:1.4; font-weight:700; }
+.readings { align-self:stretch; display:flex; flex-direction:column; gap:2px; padding-top:4px; }
+.rrow { display:flex; align-items:baseline; gap:8px; }
+.rl { width:28px; flex:none; font-size:12px; color:var(--brand); }
+.rv { flex:1; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:14px; }
+.rv .ro { font-size:12px; }
+.ro { color:var(--muted); }
+
+.lv { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; line-height:1.5;
+      padding:1px 7px; border-radius:999px; background:var(--light-gray); color:var(--tag-ink); white-space:nowrap; }
+.lv.unrated { color:var(--unrated); font-weight:500; }
+
+.sections { display:flex; flex-direction:column; gap:16px; }
+details.sec { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+summary { cursor:pointer; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+details.sec > summary { background:var(--read-tint); padding:10px 14px;
+                        display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.sl { display:flex; align-items:center; gap:8px; }
+.sec-chev { transform:rotate(-90deg); transition:transform .15s; }
+details.sec[open] > summary .sec-chev { transform:none; }
+h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--brand); margin:0; }
+.count { font-size:12px; color:var(--brand); }
+
+.radicals { padding:16px; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.radical { display:flex; align-items:center; gap:16px; padding:8px 16px; border:1px solid var(--line);
+           border-radius:10px; line-height:1.3; }
+.radical .rg { font-size:24px; }
+.radical .rm { font-size:12px; color:var(--muted); }
+
+.vocab { padding:8px 14px; }
+.picker { display:flex; flex-wrap:wrap; gap:6px 4px; padding-bottom:12px; }
+.picker input { position:absolute; opacity:0; pointer-events:none; }
+.picker label { font-size:12.8px; font-weight:700; padding:4px 9px; border-radius:999px; cursor:pointer;
+                border:1px solid var(--line); color:var(--brand); }
+.picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
+.picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
+
+.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:16px 0; }
+/* Word and meaning: Light accent line on the left */
+.word-main { align-self:stretch; display:flex; flex-direction:column; gap:4px; padding-left:12px;
+             border-left:3px solid var(--line); }
+.word-head { align-self:stretch; display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
+.lv-wrap { padding-bottom:6px; flex:none; }
+.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; }
+.wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
+.word-en { font-size:16px; color:var(--muted); }
+
+details.ph { align-self:stretch; margin-top:6px; border:2px solid var(--light-gray); }
+details.ph > summary { background:var(--light-gray); }
+details.ph .none { margin:0; padding:12px 14px; }
+ul.phrases { list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:16px; }
+/* Phrase and translation on the left; the "i" button has its own column on the right, level with the
+   phrase's first line, so the translation never runs underneath it */
+ul.phrases li { display:grid; grid-template-columns:1fr auto; gap:2px 16px; }
+.ph-row { display:contents; }
+ul.phrases li .info-btn { grid-column:2; grid-row:1 / span 2; align-self:start; margin-top:1px; }
+ul.phrases li .ph-en { grid-column:1; }
+.ph-ja { font-size:16.8px; }
+.ph-en { font-size:14.4px; color:var(--muted); }
+
+/* Tappable words: light accent highlight on hover, details in the bottom sheet */
+.w { font:inherit; color:inherit; background:none; border:0; padding:0 2px; margin:0 -2px; border-radius:4px;
+     cursor:pointer; transition:background .12s; }
+.w:hover { background:var(--brand-soft); }
+.w:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+.pt { color:var(--particle); } /* particles in phrases: は, が, を, に… */
+.vb { color:var(--verb); } /* whole verb expressions in phrases: 入学した, ありません, です… */
+.w.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; } /* headwords keep their size as buttons */
+/* Bottom sheet: slides up from the bottom; closes with ×, Esc or a tap outside */
+dialog.sheet { position:fixed; inset:auto 0 0 0; margin:0 auto; padding:0; width:100%; max-width:592px; max-height:85vh;
+               border:0; border-radius:20px 20px 0 0; background:var(--card); color:var(--ink);
+               box-shadow:0 -4px 24px rgba(26,20,77,.12); }
+dialog.sheet[open] { animation:sheet-up .22s ease-out; }
+@keyframes sheet-up { from { transform:translateY(100%); } to { transform:none; } }
+dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
+.sheet-body { position:relative; padding:12px 24px 32px; text-align:center; outline:none; }
+.sheet-handle { display:block; width:40px; height:4px; margin:0 auto; border-radius:2px; background:var(--brand-soft); }
+.sheet-close { position:absolute; top:12px; right:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
+.sheet-word { margin:24px 0 4px; font-size:44px; font-weight:700; line-height:1.5; }
+.sheet-word rt { font-size:16px; font-weight:500; color:var(--muted); }
+.sheet-meaning { margin:0 0 20px; font-size:16px; color:var(--muted); }
+/* A whole phrase: smaller than a single word so a sentence fits in a few lines */
+.sheet.is-phrase .sheet-word { margin-top:32px; font-size:26px; font-weight:500; line-height:2; }
+.sheet.is-phrase .sheet-word rt { font-size:12px; }
+.sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
+/* Phrase "i" button: opens the sheet with the whole phrase */
+.info-btn { flex:none; display:inline-flex; width:24px; height:24px; padding:0; border:0; background:none;
+            color:var(--brand); cursor:pointer; border-radius:50%; line-height:0; }
+.info-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.sheet .play svg { width:20px; height:20px; }
+.play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
+.tts .play { display:inline-flex; }
+.play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.none { color:var(--muted); font-size:14.4px; font-style:italic; margin:6px 0 0; }
+
+.top-row { flex:none; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.progress { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.progress-legend { display:flex; justify-content:space-between; font-size:12px; font-weight:700;
+                   letter-spacing:.02em; color:var(--brand); }
+.progress-track { height:6px; border-radius:999px; background:var(--brand-soft); overflow:hidden; }
+.progress-fill { height:100%; border-radius:999px; background:var(--brand); }
+.deck-nav { flex:none; display:flex; justify-content:center; gap:24px; margin-top:16px; }
+.nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
+           background:var(--button); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow);
+           font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
+.nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
+.nav-back .icon { transform:scaleX(-1); }
+/* Back / Next: round, icon only; 44px keeps them an easy touch target on phones */
+.nav-back, .nav-next { width:44px; padding:0; justify-content:center; }
+.nav-back svg, .nav-next svg { width:14px; height:14px; }
+.close-btn, .back-btn, .continue-btn, .quiz-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+/* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
+.bar-row { display:flex; align-items:center; gap:12px; }
+.bar-row .progress { flex:1; }
+.continue-btn, .quiz-btn { position:relative; border:0; cursor:pointer; font:inherit; }
+.continue-btn::after, .quiz-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                       background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                       padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
+.continue-btn:hover::after, .continue-btn:focus-visible::after,
+.quiz-btn:hover::after, .quiz-btn:focus-visible::after { opacity:1; }
+.deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
+
+/* Main page: one card per JLPT level */
+.decks { display:flex; flex-direction:column; gap:12px; }
+.deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
+             border:1px solid var(--line);
+             text-decoration:none; color:var(--ink); transition:background .12s; }
+/* one 1px border; hover and "current" thicken it to 2px with an inset ring, so nothing shifts */
+a.deck-card:hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
+a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
+            border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
+.dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
+.dc-meta { font-size:13px; color:var(--muted); }
+.dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.dc-tags { flex:none; display:flex; gap:6px; }
+.tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
+       line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
+.tag-progress { background:var(--pick); color:var(--pick-ink); }
+.tag-learned { background:var(--learn-on); color:var(--learn-ink); }
+.tag-soon { background:var(--tag); color:var(--tag-ink); }
+/* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
+.dc-chev-space { flex:none; width:10px; }
+.deck-card.soon { opacity:.5; }
+
+/* Deck page */
+body.deck-page main { height:auto; display:block; padding:16px; }
+.deck-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; }
+.deck-head h1 { font-size:24px; line-height:1.3; margin:0; color:var(--ink); }
+.deck-bars { display:flex; flex-direction:column; gap:14px; padding-top:8px; margin-bottom:24px; }
+.progress-fill.learned-fill { background:var(--learn-on); }
+.deck-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+@media (min-width:520px) { .deck-grid { grid-template-columns:repeat(6, 1fr); } }
+.tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px;
+        background:var(--card); border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+        transition:background .12s; }
+.tile:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.tile.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.tk { font-size:32px; line-height:1.2; font-weight:500; }
+.tm { max-width:100%; padding:0 4px; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile-check { position:absolute; top:6px; right:6px; display:none; line-height:0; }
+.tile-check .learn-bg { fill:var(--learn-on); }
+.tile.learned .tile-check { display:block; }
+
+/* Deck page, list view: one elongated card per kanji */
+.deck-list { display:flex; flex-direction:column; gap:8px; }
+.row { display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--card);
+       border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+       transition:background .12s; }
+.row:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.row.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.rk { flex:none; width:40px; text-align:center; font-size:30px; line-height:1.2; font-weight:500; }
+.rmn { flex:1; min-width:0; font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* the check shows only once learned, as in the grid view */
+.row-check { flex:none; line-height:0; visibility:hidden; }
+.row-check .learn-bg { fill:var(--learn-on); }
+.row.learned .row-check { visibility:visible; }
+/* Read = opened at least once: a faint lavender tint, in both views */
+.row.read, .tile.read { background:var(--read-tint); }
+/* Hover: mid-lavender border, between light accent and the Dark accent "last opened" outline */
+.row:not(.current):hover, .tile:not(.current):hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
+.deck-list[hidden], .deck-grid[hidden] { display:none; }
+/* List / Grid switch */
+.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--switch); border-radius:999px;
+             box-shadow:inset 0 0 0 1px var(--line); }
+.view-tabs button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:30px; padding:0; border:0;
+                    border-radius:999px; background:none; color:var(--brand); font:inherit; font-size:12.8px;
+                    font-weight:700; cursor:pointer; transition:background .12s, color .12s; }
+.view-tabs button:hover { background:var(--switch-hover); }
+.view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
+.view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.view-tabs svg { display:block; }
+
+:root { --correct-tint:#e8f6ec; --wrong-tint:#fceae8; --wrong:#e0867c; --wrong-ink:#a3342b; --correct-icon:#3f9a5b; --wrong-icon:#d2675c; }
+@media (prefers-color-scheme: dark) {
+  :root { --correct-tint:#1d3526; --wrong-tint:#3a2124; --wrong:#b8645b; --wrong-ink:#f2b3ab; --correct-icon:#5cb878; --wrong-icon:#e07f74; } }
+body.quiz-page main { height:auto; min-height:100%; display:flex; flex-direction:column; justify-content:flex-start; padding:16px; }
+.view { flex:1; display:flex; flex-direction:column; }
+button.nav-btn { border:0; cursor:pointer; font:inherit; }
+[data-focus]:focus { outline:none; } /* headings get focus on a view change, for screen readers */
+.view[hidden] { display:none; }
+.q-head { display:flex; align-items:center; gap:12px; }
+.q-head h1 { flex:1; margin:0; font-size:24px; line-height:1.3; color:var(--ink); }
+.q-sub { margin:0 0 20px 48px; font-size:14px; color:var(--muted); }
+.q-card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:24px 20px;
+          box-shadow:var(--soft-shadow); display:flex; flex-direction:column; gap:24px; }
+.q-label { margin:0 0 10px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--brand); }
+.chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip { font:inherit; font-size:12.8px; font-weight:700; line-height:1.5; padding:4px 12px; border-radius:999px; cursor:pointer;
+        background:var(--card); color:var(--brand); border:1px solid var(--line); }
+.chip[aria-pressed="true"] { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
+.chip:disabled { opacity:.4; cursor:default; }
+.chip:focus-visible, .choose-row:focus-visible, .q-btn:focus-visible, .answer:focus-visible, .pick:focus-visible,
+.link-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
+/* "Pick": opens the full-screen kanji picker; shows the chosen kanji once there are some */
+.choose-row { width:100%; margin-top:10px; display:flex; align-items:center; gap:12px; padding:12px 14px 12px 16px;
+              font:inherit; text-align:left; color:var(--ink); background:var(--card); border:1px solid var(--line);
+              border-radius:14px; cursor:pointer; }
+.choose-row.chosen { background:var(--read-tint); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.cr-text { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.cr-title { font-size:15px; font-weight:700; }
+.cr-desc { font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chosen .cr-desc { font-size:15px; color:var(--ink); }
+.cr-edit { font-size:14px; font-weight:700; color:var(--brand); }
+/* Quiz type: radio cards; only Meaning for now */
+.types { display:flex; flex-direction:column; gap:10px; }
+.type-opt { display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--line); border-radius:14px;
+            background:var(--card); cursor:pointer; }
+.type-opt input { position:absolute; opacity:0; pointer-events:none; }
+.type-opt:has(input:checked) { background:var(--read-tint); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.type-opt.soon { opacity:.6; cursor:default; }
+.radio { flex:none; width:20px; height:20px; border-radius:50%; box-shadow:inset 0 0 0 1.5px var(--hover-line); }
+.type-opt:has(input:checked) .radio { box-shadow:inset 0 0 0 2px var(--brand), inset 0 0 0 5px var(--read-tint); background:var(--brand); }
+.to-text { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.to-title { font-size:15px; font-weight:700; }
+.to-desc { font-size:13px; color:var(--muted); line-height:1.4; }
+.type-opt .tag-soon { flex:none; background:var(--light-gray); color:var(--muted); }
+.q-foot { display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:20px; }
+.q-summary { margin:0; font-size:13px; color:var(--muted); text-align:center; }
+.q-btn { width:100%; height:48px; display:inline-flex; align-items:center; justify-content:center; padding:0 24px;
+         border:0; border-radius:999px; font:inherit; font-size:15px; font-weight:700; cursor:pointer; text-decoration:none;
+         background:var(--pick); color:var(--pick-ink); }
+.q-btn.secondary { background:var(--card); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.q-btn:disabled { opacity:.4; cursor:default; }
+/* Picker: the whole screen for the grid; the button stays at the bottom */
+.pick-bar { display:flex; align-items:center; gap:16px; margin-bottom:12px; font-size:14px; }
+.pick-bar span { flex:1; font-weight:500; }
+.link-btn { padding:0; border:0; background:none; font:inherit; font-size:14px; font-weight:700; color:var(--brand); cursor:pointer; }
+.pick-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; padding-bottom:8px; }
+@media (min-width:520px) { .pick-grid { grid-template-columns:repeat(6, 1fr); } }
+.pick { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px; min-width:0;
+        font:inherit; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:14px; cursor:pointer; }
+.pick[aria-pressed="true"] { background:var(--read-tint); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.pick-check { position:absolute; top:6px; right:6px; display:none; }
+.pick-check circle { fill:var(--brand); }
+.pick[aria-pressed="true"] .pick-check { display:block; }
+.pick-foot { position:sticky; bottom:0; margin:auto -16px -16px; padding:12px 16px 16px;
+             background:linear-gradient(to bottom, transparent, var(--bg) 12px); }
+/* Question */
+.q-banner { margin:0 0 16px; padding:10px 14px; border-radius:12px; background:var(--read-tint); color:var(--brand);
+            font-size:13px; font-weight:500; text-align:center; }
+.q-prompt-card { align-items:center; gap:4px; padding:24px 20px 28px; }
+.q-prompt { margin:0; font-size:14px; color:var(--muted); }
+.q-kanji { font-size:128px; line-height:1.15; font-weight:500; }
+.answers { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.answer { min-height:56px; display:flex; align-items:center; gap:12px; padding:8px 14px 8px 18px; text-align:left;
+          font:inherit; font-size:16px; font-weight:500; color:var(--ink); background:var(--card);
+          border:1px solid var(--line); border-radius:14px; box-shadow:var(--soft-shadow); cursor:pointer; }
+.answer:hover:not(:disabled) { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line), var(--soft-shadow); }
+.answer:disabled { cursor:default; }
+.a-label { flex:1; }
+.a-icon { flex:none; line-height:0; }
+.answer.correct { background:var(--correct-tint); border-color:var(--learn-on); box-shadow:inset 0 0 0 1px var(--learn-on);
+                  color:var(--learn-ink); opacity:1; }
+.answer.wrong { background:var(--wrong-tint); border-color:var(--wrong); box-shadow:inset 0 0 0 1px var(--wrong); color:var(--wrong-ink); opacity:1; }
+.answer.dim { opacity:.45; box-shadow:none; }
+.spacer { flex:1; min-height:20px; }
+.feedback { display:flex; flex-direction:column; gap:12px; }
+.feedback[hidden] { display:none; }
+.fb-title { margin:0; font-size:18px; font-weight:700; }
+.feedback.ok .fb-title { color:var(--learn-ink); }
+.feedback.no .fb-title { color:var(--wrong-ink); }
+.fb-body { margin:4px 0 0; font-size:14px; }
+/* Results */
+.r-score { display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
+.r-num { font-size:44px; font-weight:700; line-height:1.1; color:var(--brand); }
+.r-caption { font-size:14px; color:var(--muted); }
+.r-second { padding:4px 10px; border-radius:999px; background:var(--read-tint); color:var(--brand);
+            font-size:12px; font-weight:500; }
+.r-missed { display:flex; flex-direction:column; gap:8px; }
+.r-missed .q-label { margin:0 0 2px; }
+.r-note { flex:none; display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:700; color:var(--brand); }
+.row-static .r-note { font-weight:500; color:var(--learn-ink); }
+.row.row-static:hover { border-color:var(--line); box-shadow:none; }
+.r-none { margin:0; font-size:14px; color:var(--muted); }
+.r-learn { display:flex; flex-direction:column; gap:12px; padding:16px; border-radius:14px; background:var(--read-tint); }
+.r-learn[hidden], .r-done[hidden] { display:none; }
+.r-learn h2 { margin:0; font-size:16px; text-transform:none; letter-spacing:0; color:var(--ink); }
+.r-learn p { margin:0; font-size:14px; }
+.r-glyphs { display:flex; flex-wrap:wrap; gap:6px; }
+.r-glyphs span { padding:2px 8px; border-radius:8px; background:var(--card); border:1px solid var(--line); font-size:18px; font-weight:500; }
+.r-btns { display:flex; gap:8px; margin-top:12px; } /* 24px below the kanji, with the box's 12px gap */
+.r-btns .q-btn { flex:1; width:auto; padding:0 12px; }
+.r-done { display:flex; align-items:center; gap:8px; margin:0; font-size:14px; font-weight:500; color:var(--learn-ink); }
+.r-done .learn-bg { fill:var(--learn-on); }
+/* "Leave the quiz?" */
+.leave-dialog { width:calc(100% - 32px); max-width:340px; padding:28px 20px 20px; border:0; border-radius:20px;
+                background:var(--card); color:var(--ink); box-shadow:var(--shadow); text-align:center; }
+.leave-dialog::backdrop { background:rgba(26,20,77,.35); }
+.ld-title { margin:0 0 4px; font-size:18px; font-weight:700; }
+.ld-text { margin:0; font-size:14px; color:var(--muted); }
+.ld-btns { display:flex; gap:8px; margin-top:20px; }
+.ld-btns .q-btn { flex:1; width:auto; padding:0 12px; }
+.r-foot { display:flex; flex-direction:column; gap:10px; padding-top:16px; }
+</style></head>
+<body class="quiz-page"><main>
+<section class="view" id="view-setup" aria-labelledby="setup-title">
+<header class="q-head"><a class="nav-btn back-btn" href="index.html" aria-label="Back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M8.5 5H1.5M4.5 1.5L1 5L4.5 8.5" stroke="#310A3E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+<h1 id="setup-title" tabindex="-1" data-focus>Quiz</h1></header>
+<p class="q-sub">N5 kanji</p>
+<div class="q-card">
+<div><h2 class="q-label">Kanji</h2>
+<div class="chips" id="src-chips"><button type="button" class="chip" data-src="all" aria-pressed="false">All · <span class="n">0</span></button><button type="button" class="chip" data-src="learned" aria-pressed="false">Learned · <span class="n">0</span></button><button type="button" class="chip" data-src="new" aria-pressed="false">New · <span class="n">0</span></button><button type="button" class="chip" data-src="notlearned" aria-pressed="false">Not learned · <span class="n">0</span></button></div>
+<button type="button" class="choose-row" id="choose-row" aria-haspopup="true">
+<span class="cr-text"><span class="cr-title" id="choose-title">Pick</span><span class="cr-desc" id="choose-desc">Select specific kanji from the deck</span></span>
+<span class="cr-edit" id="choose-edit" hidden>Edit</span><span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3.5l4.5 4.5L6 12.5" stroke="#310A3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
+<div><h2 class="q-label" id="type-label">Quiz type</h2>
+<div class="types" role="radiogroup" aria-labelledby="type-label">
+<label class="type-opt"><input type="radio" name="qtype" value="meaning" checked><span class="radio"></span>
+<span class="to-text"><span class="to-title">Meaning</span><span class="to-desc">See a kanji, pick its meaning</span></span></label>
+<label class="type-opt soon"><input type="radio" name="qtype" disabled><span class="radio"></span><span class="to-text"><span class="to-title">Reading</span><span class="to-desc">See a word, pick its reading</span></span><span class="tag tag-soon">Coming soon</span></label><label class="type-opt soon"><input type="radio" name="qtype" disabled><span class="radio"></span><span class="to-text"><span class="to-title">Matching</span><span class="to-desc">Match with meanings or readings</span></span><span class="tag tag-soon">Coming soon</span></label></div></div>
+<div><h2 class="q-label">Length</h2>
+<div class="chips" id="len-chips"><button type="button" class="chip" data-len="10" aria-pressed="true">10</button>
+<button type="button" class="chip" data-len="20" aria-pressed="false">20</button></div></div>
+</div>
+<div class="q-foot"><p class="q-summary" id="summary" aria-live="polite"></p>
+<button type="button" class="q-btn" id="start">Start quiz</button></div>
+</section><section class="view" id="view-pick" aria-labelledby="pick-title" hidden>
+<header class="q-head"><button type="button" class="nav-btn back-btn" id="pick-back" aria-label="Back to the quiz setup"><span class="icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M8.5 5H1.5M4.5 1.5L1 5L4.5 8.5" stroke="#310A3E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+<h1 id="pick-title" tabindex="-1" data-focus>Choose kanji</h1></header>
+<p class="q-sub">N5 kanji · for the quiz</p>
+<div class="pick-bar"><span id="pick-count" aria-live="polite">0 selected</span>
+<button type="button" class="link-btn" id="pick-all">Select all</button><button type="button" class="link-btn" id="pick-clear">Clear</button></div>
+<div class="pick-grid" id="pick-grid"><button type="button" class="pick" data-k="日" aria-pressed="false" aria-label="日, day"><span class="tk" lang="ja">日</span><span class="tm">day</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="一" aria-pressed="false" aria-label="一, one"><span class="tk" lang="ja">一</span><span class="tm">one</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="国" aria-pressed="false" aria-label="国, country"><span class="tk" lang="ja">国</span><span class="tm">country</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="人" aria-pressed="false" aria-label="人, person"><span class="tk" lang="ja">人</span><span class="tm">person</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="年" aria-pressed="false" aria-label="年, year"><span class="tk" lang="ja">年</span><span class="tm">year</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="大" aria-pressed="false" aria-label="大, large"><span class="tk" lang="ja">大</span><span class="tm">large</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="十" aria-pressed="false" aria-label="十, ten"><span class="tk" lang="ja">十</span><span class="tm">ten</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="二" aria-pressed="false" aria-label="二, two"><span class="tk" lang="ja">二</span><span class="tm">two</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="本" aria-pressed="false" aria-label="本, book"><span class="tk" lang="ja">本</span><span class="tm">book</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="中" aria-pressed="false" aria-label="中, in"><span class="tk" lang="ja">中</span><span class="tm">in</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="長" aria-pressed="false" aria-label="長, long"><span class="tk" lang="ja">長</span><span class="tm">long</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="出" aria-pressed="false" aria-label="出, exit"><span class="tk" lang="ja">出</span><span class="tm">exit</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="三" aria-pressed="false" aria-label="三, three"><span class="tk" lang="ja">三</span><span class="tm">three</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="時" aria-pressed="false" aria-label="時, time"><span class="tk" lang="ja">時</span><span class="tm">time</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="行" aria-pressed="false" aria-label="行, going"><span class="tk" lang="ja">行</span><span class="tm">going</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="見" aria-pressed="false" aria-label="見, see"><span class="tk" lang="ja">見</span><span class="tm">see</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="月" aria-pressed="false" aria-label="月, month"><span class="tk" lang="ja">月</span><span class="tm">month</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="後" aria-pressed="false" aria-label="後, behind"><span class="tk" lang="ja">後</span><span class="tm">behind</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="前" aria-pressed="false" aria-label="前, in front"><span class="tk" lang="ja">前</span><span class="tm">in front</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="生" aria-pressed="false" aria-label="生, life"><span class="tk" lang="ja">生</span><span class="tm">life</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="五" aria-pressed="false" aria-label="五, five"><span class="tk" lang="ja">五</span><span class="tm">five</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="間" aria-pressed="false" aria-label="間, interval"><span class="tk" lang="ja">間</span><span class="tm">interval</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="上" aria-pressed="false" aria-label="上, above"><span class="tk" lang="ja">上</span><span class="tm">above</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="東" aria-pressed="false" aria-label="東, east"><span class="tk" lang="ja">東</span><span class="tm">east</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="四" aria-pressed="false" aria-label="四, four"><span class="tk" lang="ja">四</span><span class="tm">four</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="今" aria-pressed="false" aria-label="今, now"><span class="tk" lang="ja">今</span><span class="tm">now</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="金" aria-pressed="false" aria-label="金, gold"><span class="tk" lang="ja">金</span><span class="tm">gold</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="九" aria-pressed="false" aria-label="九, nine"><span class="tk" lang="ja">九</span><span class="tm">nine</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="入" aria-pressed="false" aria-label="入, enter"><span class="tk" lang="ja">入</span><span class="tm">enter</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="学" aria-pressed="false" aria-label="学, study"><span class="tk" lang="ja">学</span><span class="tm">study</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="高" aria-pressed="false" aria-label="高, tall"><span class="tk" lang="ja">高</span><span class="tm">tall</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="円" aria-pressed="false" aria-label="円, circle"><span class="tk" lang="ja">円</span><span class="tm">circle</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="子" aria-pressed="false" aria-label="子, child"><span class="tk" lang="ja">子</span><span class="tm">child</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="外" aria-pressed="false" aria-label="外, outside"><span class="tk" lang="ja">外</span><span class="tm">outside</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="八" aria-pressed="false" aria-label="八, eight"><span class="tk" lang="ja">八</span><span class="tm">eight</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="六" aria-pressed="false" aria-label="六, six"><span class="tk" lang="ja">六</span><span class="tm">six</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="下" aria-pressed="false" aria-label="下, below"><span class="tk" lang="ja">下</span><span class="tm">below</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="来" aria-pressed="false" aria-label="来, come"><span class="tk" lang="ja">来</span><span class="tm">come</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="気" aria-pressed="false" aria-label="気, spirit"><span class="tk" lang="ja">気</span><span class="tm">spirit</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="小" aria-pressed="false" aria-label="小, little"><span class="tk" lang="ja">小</span><span class="tm">little</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="七" aria-pressed="false" aria-label="七, seven"><span class="tk" lang="ja">七</span><span class="tm">seven</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="山" aria-pressed="false" aria-label="山, mountain"><span class="tk" lang="ja">山</span><span class="tm">mountain</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="話" aria-pressed="false" aria-label="話, tale"><span class="tk" lang="ja">話</span><span class="tm">tale</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="女" aria-pressed="false" aria-label="女, woman"><span class="tk" lang="ja">女</span><span class="tm">woman</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="北" aria-pressed="false" aria-label="北, north"><span class="tk" lang="ja">北</span><span class="tm">north</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="午" aria-pressed="false" aria-label="午, noon"><span class="tk" lang="ja">午</span><span class="tm">noon</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="百" aria-pressed="false" aria-label="百, hundred"><span class="tk" lang="ja">百</span><span class="tm">hundred</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="書" aria-pressed="false" aria-label="書, write"><span class="tk" lang="ja">書</span><span class="tm">write</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="先" aria-pressed="false" aria-label="先, before"><span class="tk" lang="ja">先</span><span class="tm">before</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="名" aria-pressed="false" aria-label="名, name"><span class="tk" lang="ja">名</span><span class="tm">name</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="川" aria-pressed="false" aria-label="川, stream"><span class="tk" lang="ja">川</span><span class="tm">stream</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="千" aria-pressed="false" aria-label="千, thousand"><span class="tk" lang="ja">千</span><span class="tm">thousand</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="水" aria-pressed="false" aria-label="水, water"><span class="tk" lang="ja">水</span><span class="tm">water</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="半" aria-pressed="false" aria-label="半, half"><span class="tk" lang="ja">半</span><span class="tm">half</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="男" aria-pressed="false" aria-label="男, male"><span class="tk" lang="ja">男</span><span class="tm">male</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="西" aria-pressed="false" aria-label="西, west"><span class="tk" lang="ja">西</span><span class="tm">west</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="電" aria-pressed="false" aria-label="電, electricity"><span class="tk" lang="ja">電</span><span class="tm">electricity</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="校" aria-pressed="false" aria-label="校, exam"><span class="tk" lang="ja">校</span><span class="tm">exam</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="語" aria-pressed="false" aria-label="語, word"><span class="tk" lang="ja">語</span><span class="tm">word</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="土" aria-pressed="false" aria-label="土, soil"><span class="tk" lang="ja">土</span><span class="tm">soil</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="木" aria-pressed="false" aria-label="木, tree"><span class="tk" lang="ja">木</span><span class="tm">tree</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="聞" aria-pressed="false" aria-label="聞, hear"><span class="tk" lang="ja">聞</span><span class="tm">hear</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="食" aria-pressed="false" aria-label="食, eat"><span class="tk" lang="ja">食</span><span class="tm">eat</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="車" aria-pressed="false" aria-label="車, car"><span class="tk" lang="ja">車</span><span class="tm">car</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="何" aria-pressed="false" aria-label="何, what"><span class="tk" lang="ja">何</span><span class="tm">what</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="南" aria-pressed="false" aria-label="南, south"><span class="tk" lang="ja">南</span><span class="tm">south</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="万" aria-pressed="false" aria-label="万, ten thousand"><span class="tk" lang="ja">万</span><span class="tm">ten thousand</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="毎" aria-pressed="false" aria-label="毎, every"><span class="tk" lang="ja">毎</span><span class="tm">every</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="白" aria-pressed="false" aria-label="白, white"><span class="tk" lang="ja">白</span><span class="tm">white</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="天" aria-pressed="false" aria-label="天, heavens"><span class="tk" lang="ja">天</span><span class="tm">heavens</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="母" aria-pressed="false" aria-label="母, mother"><span class="tk" lang="ja">母</span><span class="tm">mother</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="火" aria-pressed="false" aria-label="火, fire"><span class="tk" lang="ja">火</span><span class="tm">fire</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="右" aria-pressed="false" aria-label="右, right"><span class="tk" lang="ja">右</span><span class="tm">right</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="読" aria-pressed="false" aria-label="読, read"><span class="tk" lang="ja">読</span><span class="tm">read</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="友" aria-pressed="false" aria-label="友, friend"><span class="tk" lang="ja">友</span><span class="tm">friend</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="左" aria-pressed="false" aria-label="左, left"><span class="tk" lang="ja">左</span><span class="tm">left</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="休" aria-pressed="false" aria-label="休, rest"><span class="tk" lang="ja">休</span><span class="tm">rest</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="父" aria-pressed="false" aria-label="父, father"><span class="tk" lang="ja">父</span><span class="tm">father</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="pick" data-k="雨" aria-pressed="false" aria-label="雨, rain"><span class="tk" lang="ja">雨</span><span class="tm">rain</span><svg class="pick-check" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<div class="pick-foot"><button type="button" class="q-btn" id="pick-use">Use 0 kanji</button></div>
+</section><section class="view" id="view-question" aria-label="Question" hidden>
+<div class="top-row"><div class="progress" id="q-progress" role="progressbar" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1">
+<div class="progress-legend"><span id="q-count">1 / 10</span><span id="q-pct">10%</span></div>
+<div class="progress-track"><div class="progress-fill" id="q-fill" style="width:10%"></div></div></div>
+<button type="button" class="nav-btn close-btn" id="q-close" aria-label="Leave the quiz" aria-haspopup="dialog"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></button></div>
+<p class="q-banner" id="q-banner" hidden></p>
+<div class="q-card q-prompt-card"><p class="q-prompt" tabindex="-1" data-focus>What does this kanji mean?</p>
+<div class="q-kanji" id="q-kanji" lang="ja"></div></div>
+<div class="answers" id="answers"></div>
+<div class="spacer"></div>
+<div class="feedback" id="feedback" aria-live="polite" hidden><div><p class="fb-title" id="fb-title"></p>
+<p class="fb-body" id="fb-body"></p></div>
+<button type="button" class="q-btn" id="next">Next</button></div>
+</section><section class="view" id="view-results" aria-labelledby="results-title" hidden>
+<header class="q-head" style="margin-bottom:16px"><h1 id="results-title" tabindex="-1" data-focus>Quiz results</h1>
+<a class="nav-btn close-btn" href="index.html" aria-label="Close, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></header>
+<div class="q-card">
+<div class="r-score"><span class="r-num" id="r-num"></span><span class="r-caption">right on the first try</span>
+<span class="r-second" id="r-second" hidden></span></div>
+<div class="r-missed" id="r-missed"><h2 class="q-label">Missed the first time</h2><div class="deck-list" id="r-list"></div></div>
+<p class="r-none" id="r-none" hidden>Nothing missed. Well done!</p>
+<div class="r-learn" id="r-learn" hidden><h2>Mark as learned?</h2><p id="r-learn-text"></p><div class="r-glyphs" id="r-glyphs"></div>
+<div class="r-btns"><button type="button" class="q-btn secondary" id="r-notnow">Not now</button>
+<button type="button" class="q-btn" id="r-mark">Mark all</button></div></div>
+<p class="r-done" id="r-done" role="status" hidden><svg width="20" height="20" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="r-done-text"></span></p>
+</div>
+<div class="r-foot"><button type="button" class="q-btn" id="r-new">New quiz</button>
+<a class="q-btn secondary" href="index.html">Back to N5 kanji</a></div>
+</section>
+<dialog class="leave-dialog" id="leave-dialog" aria-labelledby="leave-title" aria-describedby="leave-text">
+<p class="ld-title" id="leave-title">Leave the quiz?</p>
+<p class="ld-text" id="leave-text">Your answers so far won't be saved.</p>
+<div class="ld-btns"><button type="button" class="q-btn secondary" id="leave-stay" autofocus>Keep going</button>
+<a class="q-btn" href="index.html">Leave quiz</a></div></dialog>
+</main><script type="application/json" id="quiz-data">{"level": "N5", "kanji": [{"k": "日", "m": "day, sun"}, {"k": "一", "m": "one"}, {"k": "国", "m": "country"}, {"k": "人", "m": "person"}, {"k": "年", "m": "year, counter for years"}, {"k": "大", "m": "large, big"}, {"k": "十", "m": "ten"}, {"k": "二", "m": "two"}, {"k": "本", "m": "book, present"}, {"k": "中", "m": "in, inside"}, {"k": "長", "m": "long, leader"}, {"k": "出", "m": "exit, leave"}, {"k": "三", "m": "three"}, {"k": "時", "m": "time, hour"}, {"k": "行", "m": "going, journey"}, {"k": "見", "m": "see, hopes"}, {"k": "月", "m": "month, moon"}, {"k": "後", "m": "behind, back"}, {"k": "前", "m": "in front, before"}, {"k": "生", "m": "life, genuine"}, {"k": "五", "m": "five"}, {"k": "間", "m": "interval, space"}, {"k": "上", "m": "above, up"}, {"k": "東", "m": "east"}, {"k": "四", "m": "four"}, {"k": "今", "m": "now"}, {"k": "金", "m": "gold"}, {"k": "九", "m": "nine"}, {"k": "入", "m": "enter, insert"}, {"k": "学", "m": "study, learning"}, {"k": "高", "m": "tall, high"}, {"k": "円", "m": "circle, yen"}, {"k": "子", "m": "child, sign of the rat"}, {"k": "外", "m": "outside"}, {"k": "八", "m": "eight"}, {"k": "六", "m": "six"}, {"k": "下", "m": "below, down"}, {"k": "来", "m": "come, due"}, {"k": "気", "m": "spirit, mind"}, {"k": "小", "m": "little, small"}, {"k": "七", "m": "seven"}, {"k": "山", "m": "mountain"}, {"k": "話", "m": "tale, talk"}, {"k": "女", "m": "woman, female"}, {"k": "北", "m": "north"}, {"k": "午", "m": "noon, sign of the horse"}, {"k": "百", "m": "hundred"}, {"k": "書", "m": "write"}, {"k": "先", "m": "before, ahead"}, {"k": "名", "m": "name, noted"}, {"k": "川", "m": "stream, river"}, {"k": "千", "m": "thousand"}, {"k": "水", "m": "water"}, {"k": "半", "m": "half, middle"}, {"k": "男", "m": "male"}, {"k": "西", "m": "west, Spain"}, {"k": "電", "m": "electricity"}, {"k": "校", "m": "exam, school"}, {"k": "語", "m": "word, speech"}, {"k": "土", "m": "soil, earth"}, {"k": "木", "m": "tree, wood"}, {"k": "聞", "m": "hear, ask"}, {"k": "食", "m": "eat, food"}, {"k": "車", "m": "car"}, {"k": "何", "m": "what"}, {"k": "南", "m": "south"}, {"k": "万", "m": "ten thousand, 10,000"}, {"k": "毎", "m": "every"}, {"k": "白", "m": "white"}, {"k": "天", "m": "heavens, sky"}, {"k": "母", "m": "mother"}, {"k": "火", "m": "fire"}, {"k": "右", "m": "right"}, {"k": "読", "m": "read"}, {"k": "友", "m": "friend"}, {"k": "左", "m": "left"}, {"k": "休", "m": "rest, day off"}, {"k": "父", "m": "father"}, {"k": "雨", "m": "rain"}]}</script><script>
+(() => {
+  const D = JSON.parse(document.getElementById("quiz-data").textContent);
+  const get = k => { try { return localStorage.getItem(k); } catch { return null; } };
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  const $ = id => document.getElementById(id);
+  const all = D.kanji.map(x => x.k);
+  const byK = Object.fromEntries(D.kanji.map(x => [x.k, x]));
+  const isLearned = k => get("learned:" + k) === "1";
+  const isSeen = k => isLearned(k) || get("seen:" + k) === "1";
+  // Kanji groups for the chips; "new" = never opened.
+  const pools = () => ({ all, learned: all.filter(isLearned), new: all.filter(k => !isSeen(k)),
+                         notlearned: all.filter(k => !isLearned(k)) });
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  // Settings, remembered per deck
+  let saved = {}; try { saved = JSON.parse(get("quiz:" + D.level)) || {}; } catch {}
+  const S = { source: saved.source || "all", custom: (saved.custom || []).filter(k => byK[k]), length: saved.length === 20 ? 20 : 10 };
+  if (S.source === "custom" && !S.custom.length) S.source = "all";
+  const save = () => put("quiz:" + D.level, JSON.stringify(S));
+  const chosen = () => S.source === "custom" ? S.custom : pools()[S.source] || all;
+
+  const show = (view, focus = true) => {
+    for (const v of document.querySelectorAll(".view")) v.hidden = v.id !== "view-" + view;
+    window.scrollTo(0, 0);
+    const f = $("view-" + view).querySelector("[data-focus]");
+    if (focus && f) f.focus({ preventScroll: true });
+  };
+
+  // ---- Setup
+  function renderSetup() {
+    const p = pools();
+    for (const b of $("src-chips").querySelectorAll(".chip")) {
+      const n = p[b.dataset.src].length;
+      b.querySelector(".n").textContent = n;
+      b.disabled = n === 0;
+      b.setAttribute("aria-pressed", S.source === b.dataset.src);
+    }
+    const custom = S.source === "custom";
+    $("choose-row").classList.toggle("chosen", custom);
+    $("choose-title").textContent = custom ? S.custom.length + " kanji chosen" : "Pick";
+    $("choose-desc").textContent = custom ? S.custom.join(" ") : "Select specific kanji from the deck";
+    $("choose-desc").lang = custom ? "ja" : "en";
+    $("choose-edit").hidden = !custom;
+    for (const b of $("len-chips").querySelectorAll(".chip")) b.setAttribute("aria-pressed", +b.dataset.len === S.length);
+    const n = chosen().length, q = Math.min(n, S.length);
+    $("summary").textContent = n === 0 ? "No kanji in this group yet"
+      : n < S.length ? `${q} question${q > 1 ? "s" : ""}, one per ${custom ? "chosen " : ""}kanji`
+      : `${q} questions from ${n} kanji`;
+    $("start").disabled = n === 0;
+  }
+  $("src-chips").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b || b.disabled) return;
+    S.source = b.dataset.src; save(); renderSetup();
+  });
+  $("len-chips").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    S.length = +b.dataset.len; save(); renderSetup();
+  });
+
+  // ---- Picker
+  let picking = new Set();
+  const renderPick = () => {
+    for (const b of $("pick-grid").children) b.setAttribute("aria-pressed", picking.has(b.dataset.k));
+    $("pick-count").textContent = picking.size + " selected";
+    $("pick-use").textContent = picking.size ? `Use ${picking.size} kanji` : "Select at least one kanji";
+    $("pick-use").disabled = !picking.size;
+  };
+  $("choose-row").addEventListener("click", () => {
+    picking = new Set(S.source === "custom" ? S.custom : []); renderPick(); show("pick");
+  });
+  $("pick-grid").addEventListener("click", e => {
+    const b = e.target.closest(".pick"); if (!b) return;
+    picking.has(b.dataset.k) ? picking.delete(b.dataset.k) : picking.add(b.dataset.k); renderPick();
+  });
+  $("pick-all").addEventListener("click", () => { picking = new Set(all); renderPick(); });
+  $("pick-clear").addEventListener("click", () => { picking.clear(); renderPick(); });
+  $("pick-back").addEventListener("click", () => show("setup"));
+  $("pick-use").addEventListener("click", () => {
+    S.custom = all.filter(k => picking.has(k)); S.source = "custom"; save(); renderSetup(); show("setup");
+  });
+
+  // ---- Questions. Wrong answers come back once, in a second round at the end.
+  const CHECK = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="var(--correct-icon)"/><path d="M7.5 12.5l3 3 6-6.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CROSS = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="var(--wrong-icon)"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  let Q = null;
+  const items = () => Q.round === "main" ? Q.main : Q.review;
+  const options = k => {
+    const right = byK[k].m, wrong = [];
+    for (const x of shuffle(D.kanji)) if (x.k !== k && x.m !== right && !wrong.includes(x.m) && wrong.length < 3) wrong.push(x.m);
+    return shuffle([right, ...wrong]);
+  };
+  function ask() {
+    const list = items(), k = list[Q.i], pos = Q.i + 1, pct = Math.round(pos / list.length * 100);
+    $("q-count").textContent = (Q.round === "review" ? "Review " : "") + pos + " / " + list.length;
+    $("q-pct").textContent = pct + "%";
+    $("q-fill").style.width = pct + "%";
+    $("q-progress").setAttribute("aria-valuenow", pos); $("q-progress").setAttribute("aria-valuemax", list.length);
+    $("q-banner").hidden = Q.round !== "review";
+    $("q-banner").textContent = list.length === 1 ? "Second try: the kanji you missed" : `Second try: the ${list.length} kanji you missed`;
+    $("q-kanji").textContent = k;
+    const box = $("answers"); box.innerHTML = "";
+    for (const m of options(k)) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "answer"; b.dataset.m = m;
+      b.innerHTML = '<span class="a-label"></span><span class="a-icon" aria-hidden="true"></span>';
+      b.querySelector(".a-label").textContent = m;
+      box.appendChild(b);
+    }
+    $("feedback").hidden = true;
+    show("question");
+  }
+  $("start").addEventListener("click", () => {
+    Q = { main: shuffle(chosen()).slice(0, S.length), review: [], round: "main", i: 0,
+          first: new Set(), second: new Set(), missed: [] };
+    ask();
+  });
+  $("answers").addEventListener("click", e => {
+    const b = e.target.closest(".answer"); if (!b || b.disabled) return;
+    const k = items()[Q.i], right = byK[k].m, ok = b.dataset.m === right;
+    for (const x of $("answers").children) {
+      x.disabled = true;
+      const cls = x.dataset.m === right ? "correct" : x === b ? "wrong" : "dim";
+      x.classList.add(cls);
+      if (cls !== "dim") x.querySelector(".a-icon").innerHTML = cls === "correct" ? CHECK : CROSS;
+    }
+    if (Q.round === "main") { if (ok) Q.first.add(k); else Q.missed.push(k); }
+    else if (ok) Q.second.add(k);
+    const fb = $("feedback");
+    fb.className = "feedback " + (ok ? "ok" : "no");
+    $("fb-title").textContent = ok ? "Correct!" : "Not quite";
+    // A wrong answer already shows the right one in green, so the text only says what happens next.
+    $("fb-body").textContent = ok ? `${k} means ${right}.` : Q.round === "main" ? "You'll see it again at the end of the quiz." : "";
+    $("fb-body").hidden = !$("fb-body").textContent;
+    const last = Q.i + 1 === items().length && !(Q.round === "main" && Q.missed.length);
+    $("next").textContent = last ? "See results" : "Next";
+    fb.hidden = false;
+    $("next").focus({ preventScroll: true });
+  });
+  $("next").addEventListener("click", () => {
+    Q.i++;
+    if (Q.i < items().length) return ask();
+    if (Q.round === "main" && Q.missed.length) { Q.round = "review"; Q.review = shuffle(Q.missed); Q.i = 0; return ask(); }
+    results();
+  });
+  // Leaving mid-quiz asks first (our own dialog: the browser's confirm() can be blocked).
+  const leave = $("leave-dialog");
+  $("q-close").addEventListener("click", () => {
+    if (leave.showModal) leave.showModal(); else location.href = "index.html";
+  });
+  $("leave-stay").addEventListener("click", () => leave.close());
+  leave.addEventListener("click", e => { if (e.target === leave) leave.close(); }); // tap outside = keep going
+
+
+  // ---- Results: score is first-try answers; offer to mark the right ones as learned.
+  const CHEVRON = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5l4.5 4.5L6 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  let toMark = [];
+  function results() {
+    const n = Q.main.length;
+    $("r-num").textContent = Q.first.size + " / " + n;
+    $("r-second").hidden = !Q.second.size;
+    $("r-second").textContent = `${Q.second.size} right on the second try`;
+    const list = $("r-list"); list.innerHTML = "";
+    // Wrong both times: a link to the card to study it. Right on the second try: just listed.
+    for (const k of Q.missed) {
+      const twice = !Q.second.has(k);
+      const row = document.createElement(twice ? "a" : "div");
+      row.className = twice ? "row" : "row row-static";
+      if (twice) row.href = encodeURIComponent(k) + ".html";
+      row.innerHTML = '<span class="rk" lang="ja"></span><span class="rmn"></span><span class="r-note"></span>';
+      row.children[0].textContent = k; row.children[1].textContent = byK[k].m;
+      row.children[2].innerHTML = twice ? "Open card" + CHEVRON : "Right on 2nd try";
+      list.appendChild(row);
+    }
+    $("r-missed").hidden = !Q.missed.length;
+    $("r-none").hidden = !!Q.missed.length;
+    toMark = Q.main.filter(k => Q.first.has(k) && !isLearned(k));
+    $("r-learn").hidden = !toMark.length;
+    $("r-done").hidden = true;
+    const one = toMark.length === 1;
+    $("r-learn-text").textContent = `You got ${toMark.length} kanji right on the first try that ${one ? "isn't" : "aren't"} marked as learned yet.`;
+    $("r-glyphs").innerHTML = "";
+    for (const k of toMark) { const s = document.createElement("span"); s.lang = "ja"; s.textContent = k; $("r-glyphs").appendChild(s); }
+    $("r-mark").textContent = one ? "Mark as learned" : `Mark all ${toMark.length}`;
+    put("quizlast:" + D.level, JSON.stringify({ date: new Date().toISOString(), score: Q.first.size, total: n }));
+    show("results");
+  }
+  $("r-mark").addEventListener("click", () => {
+    for (const k of toMark) put("learned:" + k, "1");
+    $("r-learn").hidden = true;
+    $("r-done-text").textContent = `Marked ${toMark.length} kanji as learned.`;
+    $("r-done").hidden = false;
+  });
+  $("r-notnow").addEventListener("click", () => { $("r-learn").hidden = true; });
+  $("r-new").addEventListener("click", () => { renderSetup(); show("setup"); });
+
+  renderSetup();
+  show("setup", false);
+})();
+</script></body></html>
