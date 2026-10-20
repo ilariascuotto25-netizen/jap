@@ -2,22 +2,22 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>先 kanji card</title><style>
-:root { --bg:#eae6f7; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
-        --brand:#261c76; --brand-soft:#eae6f7; --tag:#e5e5e5; --tag-ink:#6b665e; --unrated:#9a948a;
-        --pick:#261c76; --pick-ink:#fff; --shadow:0 4px 24px rgba(26,20,77,.12);
-        --learn-off:#e5e5e5; --learn-off-hover:#d6d6d6; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; }
+:root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
+        --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
+        --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
-          --brand:#c9c0ff; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
-          --pick:#c9c0ff; --pick-ink:#1a1640; --shadow:0 4px 24px rgba(0,0,0,.4);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; } }
+          --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
+          --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
        font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif; }
 main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
        display:flex; flex-direction:column; justify-content:center; }
-.card { background:var(--card); border-radius:20px; box-shadow:var(--shadow); padding:24px 20px;
+.card { background:var(--card); border-radius:20px; border:1px solid var(--line); padding:24px 20px; box-shadow:var(--soft-shadow);
         height:min(90%, calc(100% - 144px)); overflow-y:auto; overscroll-behavior:contain;
         display:flex; flex-direction:column; gap:24px; }
 .card > * { flex:none; }
@@ -48,14 +48,14 @@ main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
 .ro { color:var(--muted); }
 
 .lv { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; line-height:1.5;
-      padding:1px 7px; border-radius:999px; background:var(--tag); color:var(--tag-ink); white-space:nowrap; }
+      padding:1px 7px; border-radius:999px; background:var(--light-gray); color:var(--tag-ink); white-space:nowrap; }
 .lv.unrated { color:var(--unrated); font-weight:500; }
 
 .sections { display:flex; flex-direction:column; gap:16px; }
 details.sec { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
 summary { cursor:pointer; list-style:none; }
 summary::-webkit-details-marker { display:none; }
-details.sec > summary { background:var(--brand-soft); padding:10px 14px;
+details.sec > summary { background:var(--read-tint); padding:10px 14px;
                         display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .sl { display:flex; align-items:center; gap:8px; }
 .sec-chev { transform:rotate(-90deg); transition:transform .15s; }
@@ -115,11 +115,11 @@ dialog.sheet[open] { animation:sheet-up .22s ease-out; }
 dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .sheet-body { position:relative; padding:12px 24px 32px; text-align:center; outline:none; }
 .sheet-handle { display:block; width:40px; height:4px; margin:0 auto; border-radius:2px; background:var(--brand-soft); }
-.sheet-close { position:absolute; top:12px; right:12px; border:0; box-shadow:none; background:var(--brand-soft); cursor:pointer; }
+.sheet-close { position:absolute; top:12px; right:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
 .sheet-word { margin:24px 0 4px; font-size:44px; font-weight:700; line-height:1.5; }
 .sheet-word rt { font-size:16px; font-weight:500; color:var(--muted); }
 .sheet-meaning { margin:0 0 20px; font-size:16px; color:var(--muted); }
-.sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--brand-soft); }
+.sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
 .sheet .play svg { width:20px; height:20px; }
 .play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
 .tts .play { display:inline-flex; }
@@ -130,11 +130,11 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .progress { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
 .progress-legend { display:flex; justify-content:space-between; font-size:12px; font-weight:700;
                    letter-spacing:.02em; color:var(--brand); }
-.progress-track { height:6px; border-radius:999px; background:var(--card); overflow:hidden; }
+.progress-track { height:6px; border-radius:999px; background:var(--brand-soft); overflow:hidden; }
 .progress-fill { height:100%; border-radius:999px; background:var(--brand); }
 .deck-nav { flex:none; display:flex; justify-content:center; gap:24px; margin-top:16px; }
 .nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
-           background:var(--card); color:var(--brand); box-shadow:var(--shadow);
+           background:var(--button); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow);
            font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
 .nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
@@ -168,16 +168,17 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 /* Main page: one card per JLPT level */
 .decks { display:flex; flex-direction:column; gap:12px; }
 .deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
-             border:2px solid transparent;
-             text-decoration:none; color:var(--ink); box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
-a.deck-card:hover { border-color:var(--hover-line); } /* same as kanji rows and tiles */
+             border:1px solid var(--line);
+             text-decoration:none; color:var(--ink); transition:background .12s; }
+/* one 1px border; hover and "current" thicken it to 2px with an inset ring, so nothing shifts */
+a.deck-card:hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
 a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
             border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
 .dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
-.dc-title { font-size:17px; font-weight:700; }
+.dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
 .dc-meta { font-size:13px; color:var(--muted); }
-.dc-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
 .dc-tags { flex:none; display:flex; gap:6px; }
 .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
        line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
@@ -186,7 +187,7 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 .tag-soon { background:var(--tag); color:var(--tag-ink); }
 /* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
 .dc-chev-space { flex:none; width:10px; }
-.deck-card.soon { opacity:.5; box-shadow:none; }
+.deck-card.soon { opacity:.5; }
 
 /* Deck page */
 body.deck-page main { height:auto; display:block; padding:16px; }
@@ -197,10 +198,10 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .deck-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
 @media (min-width:520px) { .deck-grid { grid-template-columns:repeat(6, 1fr); } }
 .tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px;
-        background:var(--card); border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
-        box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+        background:var(--card); border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+        transition:background .12s; }
 .tile:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
-.tile.current { border-color:var(--brand); }
+.tile.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
 .tk { font-size:32px; line-height:1.2; font-weight:500; }
 .tm { max-width:100%; padding:0 4px; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tile-check { position:absolute; top:6px; right:6px; display:none; line-height:0; }
@@ -210,32 +211,33 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 /* Deck page, list view: one elongated card per kanji */
 .deck-list { display:flex; flex-direction:column; gap:8px; }
 .row { display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--card);
-       border:2px solid transparent; border-radius:14px; text-decoration:none; color:var(--ink);
-       box-shadow:0 2px 8px rgba(26,20,77,.06); transition:background .12s; }
+       border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+       transition:background .12s; }
 .row:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
-.row.current { border-color:var(--brand); }
+.row.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
 .rk { flex:none; width:40px; text-align:center; font-size:30px; line-height:1.2; font-weight:500; }
 .rmn { flex:1; min-width:0; font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.row-check { flex:none; line-height:0; }
-.row-check .learn-bg { fill:var(--learn-off); }
-.row.learned .row-check .learn-bg { fill:var(--learn-on); }
+/* the check shows only once learned, as in the grid view */
+.row-check { flex:none; line-height:0; visibility:hidden; }
+.row-check .learn-bg { fill:var(--learn-on); }
+.row.learned .row-check { visibility:visible; }
 /* Read = opened at least once: a faint lavender tint, in both views */
 .row.read, .tile.read { background:var(--read-tint); }
 /* Hover: mid-lavender border, between light accent and the Dark accent "last opened" outline */
-.row:not(.current):hover, .tile:not(.current):hover { border-color:var(--hover-line); }
+.row:not(.current):hover, .tile:not(.current):hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
 .deck-list[hidden], .deck-grid[hidden] { display:none; }
 /* List / Grid switch */
-.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--card); border-radius:999px;
-             box-shadow:0 2px 8px rgba(26,20,77,.06); }
+.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--switch); border-radius:999px;
+             box-shadow:inset 0 0 0 1px var(--line); }
 .view-tabs button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:30px; padding:0; border:0;
                     border-radius:999px; background:none; color:var(--brand); font:inherit; font-size:12.8px;
                     font-weight:700; cursor:pointer; transition:background .12s, color .12s; }
-.view-tabs button:hover { background:var(--brand-soft); }
+.view-tabs button:hover { background:var(--switch-hover); }
 .view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
 .view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .view-tabs svg { display:block; }
 .card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N4:checked) .word:not([data-level="N4"]) { display:none; }.card:has(#lv-N3:checked) .word:not([data-level="N3"]) { display:none; }.card:has(#lv-N2:checked) .word:not([data-level="N2"]) { display:none; }.card:has(#lv-N1:checked) .word:not([data-level="N1"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
-<body data-deck="N5" data-kanji="先"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="49" aria-label="Card 49 of 79"><div class="progress-legend"><span>49 / 79</span><span>62%</span></div><div class="progress-track"><div class="progress-fill" style="width:62%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
+<body data-deck="N5" data-kanji="先"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="49" aria-label="Card 49 of 79"><div class="progress-legend"><span>49 / 79</span><span>62%</span></div><div class="progress-track"><div class="progress-fill" style="width:62%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
 <header><button type="button" class="learn" data-kanji="先" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">先</div>
 <div class="info"><span class="lv">N5</span><div class="meaning">before, ahead, previous, future, precedence</div>
 <div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">セン</span><span class="ro">sen</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">さき</span><span class="ro">saki</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">ま.ず</span><span class="ro">mazu</span></span></div></div></div></header>
@@ -1359,7 +1361,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 </main>
 <dialog class="sheet" id="word-sheet" aria-labelledby="sheet-word"><div class="sheet-body" tabindex="-1" autofocus>
 <span class="sheet-handle" aria-hidden="true"></span>
-<button type="button" class="nav-btn close-btn sheet-close" id="sheet-close" aria-label="Close"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#261C76" stroke-width="2" stroke-linecap="square"/></svg></span></button>
+<button type="button" class="nav-btn close-btn sheet-close" id="sheet-close" aria-label="Close"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></button>
 <p class="sheet-word" id="sheet-word" lang="ja"></p><p class="sheet-meaning" id="sheet-meaning"></p>
 <button type="button" class="play" id="sheet-play" data-say="" aria-label="Play pronunciation"><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Audio / Play">
