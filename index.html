@@ -5,12 +5,12 @@
 :root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
         --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
-        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; }
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; --verb:#16aa6f; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; } }
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; --verb:#16aa6f; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -31,6 +31,7 @@ main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
          border-radius:50%; cursor:pointer; line-height:0; }
 .learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
 .learn:hover .learn-bg { fill:var(--learn-off-hover); }
+.learn[aria-pressed="false"] { box-shadow:inset 0 0 0 1px var(--line); } /* Light accent ring while unchecked */
 .learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
 .learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
@@ -72,7 +73,7 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .vocab { padding:8px 14px; }
 .picker { display:flex; flex-wrap:wrap; gap:6px 4px; padding-bottom:12px; }
 .picker input { position:absolute; opacity:0; pointer-events:none; }
-.picker label { font-size:12.8px; font-weight:700; padding:4px 12px; border-radius:999px; cursor:pointer;
+.picker label { font-size:12.8px; font-weight:700; padding:4px 9px; border-radius:999px; cursor:pointer;
                 border:1px solid var(--line); color:var(--brand); }
 .picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
 .picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
@@ -93,9 +94,13 @@ details.ph .chev-open { display:none; }
 details.ph[open] .chev-open { display:inline-flex; }
 details.ph[open] .chev-closed { display:none; }
 ul.phrases { list-style:none; margin:4px 0 0; padding:8px 0 8px 12px; border-left:3px solid var(--line);
-             display:flex; flex-direction:column; gap:10px; }
-ul.phrases li { display:flex; flex-direction:column; gap:2px; }
-.ph-row { display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+             display:flex; flex-direction:column; gap:16px; }
+/* Phrase and translation on the left; the "i" button has its own column on the right, level with the
+   phrase's first line, so the translation never runs underneath it */
+ul.phrases li { display:grid; grid-template-columns:1fr auto; gap:2px 16px; }
+.ph-row { display:contents; }
+ul.phrases li .info-btn { grid-column:2; grid-row:1 / span 2; align-self:start; margin-top:1px; }
+ul.phrases li .ph-en { grid-column:1; }
 .ph-ja { font-size:16.8px; }
 .ph-en { font-size:14.4px; color:var(--muted); }
 
@@ -105,6 +110,7 @@ ul.phrases li { display:flex; flex-direction:column; gap:2px; }
 .w:hover { background:var(--brand-soft); }
 .w:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
 .pt { color:var(--particle); } /* particles in phrases: は, が, を, に… */
+.vb { color:var(--verb); } /* whole verb expressions in phrases: 入学した, ありません, です… */
 .w.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; } /* headwords keep their size as buttons */
 /* Bottom sheet: slides up from the bottom; closes with ×, Esc or a tap outside */
 dialog.sheet { position:fixed; inset:auto 0 0 0; margin:0 auto; padding:0; width:100%; max-width:592px; max-height:85vh;
@@ -119,6 +125,14 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .sheet-word { margin:24px 0 4px; font-size:44px; font-weight:700; line-height:1.5; }
 .sheet-word rt { font-size:16px; font-weight:500; color:var(--muted); }
 .sheet-meaning { margin:0 0 20px; font-size:16px; color:var(--muted); }
+/* A whole phrase: smaller than a single word so a sentence fits in a few lines */
+.sheet.is-phrase .sheet-word { margin-top:32px; font-size:26px; font-weight:500; line-height:2; }
+.sheet.is-phrase .sheet-word rt { font-size:12px; }
+.sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
+/* Phrase "i" button: opens the sheet with the whole phrase */
+.info-btn { flex:none; display:inline-flex; width:24px; height:24px; padding:0; border:0; background:none;
+            color:var(--brand); cursor:pointer; border-radius:50%; line-height:0; }
+.info-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
 .sheet .play svg { width:20px; height:20px; }
 .play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
