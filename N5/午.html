@@ -134,7 +134,7 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
 .sheet .play svg { width:20px; height:20px; }
 .play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
-.tts .play { display:inline-flex; }
+.tts .play, .play.has-audio { display:inline-flex; }
 .play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .none { color:var(--muted); font-size:14.4px; font-style:italic; margin:6px 0 0; }
 
@@ -144,6 +144,13 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
                    letter-spacing:.02em; color:var(--brand); }
 .progress-track { height:6px; border-radius:999px; background:var(--brand-soft); overflow:hidden; }
 .progress-fill { height:100%; border-radius:999px; background:var(--brand); }
+.progress-legend .count { margin-left:8px; }
+/* Card page: where this card sits in the deck (not progress): "30 of 79" and a dot on a thin line */
+.position { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.position-label { font-size:12px; font-weight:700; letter-spacing:.02em; color:var(--brand); }
+.position-track { position:relative; height:10px; }
+.position-track::before { content:""; position:absolute; left:0; right:0; top:3px; height:4px; border-radius:2px; background:var(--brand-soft); }
+.position-dot { position:absolute; top:0; width:10px; height:10px; border-radius:50%; background:var(--brand); }
 .deck-nav { flex:none; display:flex; justify-content:center; gap:24px; margin-top:16px; }
 .nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
            background:var(--button); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow);
@@ -154,16 +161,17 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 /* Back / Next: round, icon only; 44px keeps them an easy touch target on phones */
 .nav-back, .nav-next { width:44px; padding:0; justify-content:center; }
 .nav-back svg, .nav-next svg { width:14px; height:14px; }
-.close-btn, .back-btn, .continue-btn, .quiz-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+.close-btn, .back-btn, .continue-btn, .quiz-btn, .transfer-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
 /* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
 .bar-row { display:flex; align-items:center; gap:12px; }
 .bar-row .progress { flex:1; }
-.continue-btn, .quiz-btn { position:relative; border:0; cursor:pointer; font:inherit; }
-.continue-btn::after, .quiz-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+.continue-btn, .quiz-btn, .transfer-btn { position:relative; border:0; cursor:pointer; font:inherit; }
+.continue-btn::after, .quiz-btn::after, .transfer-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
                        background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
                        padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
 .continue-btn:hover::after, .continue-btn:focus-visible::after,
-.quiz-btn:hover::after, .quiz-btn:focus-visible::after { opacity:1; }
+.quiz-btn:hover::after, .quiz-btn:focus-visible::after,
+.transfer-btn:hover::after, .transfer-btn:focus-visible::after { opacity:1; }
 .deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
 
 /* Main page: one card per JLPT level */
@@ -237,8 +245,32 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
 .view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .view-tabs svg { display:block; }
+/* Shared by the quiz and the main page's dialogs: buttons, radio cards */
+.type-opt { display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--line); border-radius:14px;
+            background:var(--card); cursor:pointer; }
+.type-opt input { position:absolute; opacity:0; pointer-events:none; }
+.type-opt:has(input:checked) { background:var(--read-tint); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.radio { flex:none; width:20px; height:20px; border-radius:50%; box-shadow:inset 0 0 0 1.5px var(--hover-line); }
+.type-opt:has(input:checked) .radio { box-shadow:inset 0 0 0 2px var(--brand), inset 0 0 0 5px var(--read-tint); background:var(--brand); }
+.to-text { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.to-title { font-size:15px; font-weight:700; }
+.to-desc { font-size:13px; color:var(--muted); line-height:1.4; }
+.q-btn { width:100%; height:48px; display:inline-flex; align-items:center; justify-content:center; padding:0 24px;
+         border:0; border-radius:999px; font:inherit; font-size:15px; font-weight:700; cursor:pointer; text-decoration:none;
+         background:var(--pick); color:var(--pick-ink); }
+.q-btn.secondary { background:var(--card); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.q-btn:disabled { opacity:.4; cursor:default; }
+/* Small centred dialog: "Leave the quiz?", "Transfer progress" */
+.app-dialog { width:calc(100% - 32px); max-width:340px; padding:28px 20px 20px; border:0; border-radius:20px;
+                background:var(--card); color:var(--ink); box-shadow:var(--shadow); text-align:center; }
+.app-dialog::backdrop { background:rgba(26,20,77,.35); }
+.ad-title { margin:0 0 4px; font-size:18px; font-weight:700; }
+.ad-text { margin:0; font-size:14px; color:var(--muted); }
+.ad-btns { display:flex; gap:8px; margin-top:20px; }
+.ad-btns .q-btn { flex:1; width:auto; padding:0 12px; }
+.q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
 .card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N3:checked) .word:not([data-level="N3"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
-<body data-deck="N5" data-kanji="午"><main><div class="top-row"><div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="79" aria-valuenow="46" aria-label="Card 46 of 79"><div class="progress-legend"><span>46 / 79</span><span>58%</span></div><div class="progress-track"><div class="progress-fill" style="width:58%"></div></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
+<body data-deck="N5" data-kanji="午"><main><div class="top-row"><div class="position" role="img" aria-label="Card 46 of 79"><span class="position-label" aria-hidden="true">46 of 79</span><div class="position-track" aria-hidden="true"><span class="position-dot" style="left:calc((100% - 10px) * 0.5769)"></span></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
 <header><button type="button" class="learn" data-kanji="午" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">午</div>
 <div class="info"><span class="lv">N5</span><div class="meaning">noon, sign of the horse, 11AM-1PM, seventh sign of Chinese zodiac</div>
 <div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">ゴ</span><span class="ro">go</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">うま</span><span class="ro">uma</span></span></div></div></div></header>
@@ -296,7 +328,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 </g>
 </svg></span></button>
 </div></dialog>
-<script type="application/json" id="words-data">[{"w": "午後", "r": "ごご", "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}], "m": "afternoon; p.m."}, {"w": "二", "r": "に", "f": [{"text": "二", "reading": "に"}], "m": "two; 2"}, {"w": "時", "r": "じ", "f": [{"text": "時", "reading": "じ"}], "m": "hour; o'clock"}, {"w": "午後二時です。", "r": "午後二時です。", "m": "It's two o'clock in the afternoon.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "二", "reading": "に"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}]}, {"w": "八", "r": "はち", "f": [{"text": "八", "reading": "はち"}], "m": "eight; 8"}, {"w": "午後八時です。", "r": "午後八時です。", "m": "It's eight o'clock at night.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "八", "reading": "はち"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}]}, {"w": "休み", "r": "やすみ", "f": [{"text": "休", "reading": "やす"}, {"text": "み"}], "m": "rest; recess; respite"}, {"w": "午後は休みだった。", "r": "午後は休みだった。", "m": "We had the afternoon off.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "休", "reading": "やす"}, {"text": "み"}, {"text": "だった", "c": "vb"}, {"text": "。"}]}, {"w": "どう", "r": "どう", "f": [{"text": "どう"}], "m": "how; in what way; how about"}, {"w": "午後はどうだった？", "r": "午後はどうだった？", "m": "How was your afternoon?", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "どう"}, {"text": "だった", "c": "vb"}, {"text": "？"}]}, {"w": "今日", "r": "きょう", "f": [{"text": "今日", "reading": "きょう"}], "m": "today; this day"}, {"w": "暇", "r": "ひま", "f": [{"text": "暇", "reading": "ひま"}], "m": "spare time; free time; leisure"}, {"w": "今日の午後は暇ですか。", "r": "今日の午後は暇ですか。", "m": "Are you free this afternoon?", "p": 1, "f": [{"text": "今日", "reading": "きょう"}, {"text": "の", "c": "pt"}, {"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "暇", "reading": "ひま"}, {"text": "です", "c": "vb"}, {"text": "か", "c": "pt"}, {"text": "。"}]}, {"w": "午前", "r": "ごぜん", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}], "m": "morning; a.m."}, {"w": "午前８時です。", "r": "午前８時です。", "m": "It’s 8:00 am.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "８"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}]}, {"w": "彼", "r": "かれ", "f": [{"text": "彼", "reading": "かれ"}], "m": "he; him"}, {"w": "起きる", "r": "おきる", "f": [{"text": "起", "reading": "お"}, {"text": "きる"}], "m": "to get up; to rise; to blaze up (fire)"}, {"w": "彼は午前中に起きた。", "r": "彼は午前中に起きた。", "m": "He got up in the morning.", "p": 1, "f": [{"text": "彼", "reading": "かれ"}, {"text": "は", "c": "pt"}, {"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "起", "reading": "お", "c": "vb"}, {"text": "きた", "c": "vb"}, {"text": "。"}]}, {"w": "家", "r": "いえ", "f": [{"text": "家", "reading": "いえ"}], "m": "house; residence; dwelling"}, {"w": "いる", "r": "いる", "f": [{"text": "いる"}], "m": "to be (of animate objects); to exist"}, {"w": "午前中は家にいます。", "r": "午前中は家にいます。", "m": "I'll be at home in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "は", "c": "pt"}, {"text": "家", "reading": "いえ"}, {"text": "に", "c": "pt"}, {"text": "います", "c": "vb"}, {"text": "。"}]}, {"w": "電話", "r": "でんわ", "f": [{"text": "電", "reading": "でん"}, {"text": "話", "reading": "わ"}], "m": "telephone call; phone call"}, {"w": "する", "r": "する", "f": [{"text": "する"}], "m": "to do; to carry out; to perform"}, {"w": "午前中に電話しますね。", "r": "午前中に電話しますね。", "m": "I'll give you a call in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "電", "reading": "でん", "c": "vb"}, {"text": "話", "reading": "わ", "c": "vb"}, {"text": "します", "c": "vb"}, {"text": "ね", "c": "pt"}, {"text": "。"}]}, {"w": "テスト", "r": "てすと", "f": [{"text": "テスト"}], "m": "test (of ability, knowledge, etc.); exam; examination"}, {"w": "ある", "r": "ある", "f": [{"text": "ある"}], "m": "to be; to exist; to live"}, {"w": "午前中にテストがあるの。", "r": "午前中にテストがあるの。", "m": "I've got an exam in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "テスト"}, {"text": "が", "c": "pt"}, {"text": "ある", "c": "vb"}, {"text": "の", "c": "pt"}, {"text": "。"}]}, {"w": "正午", "r": "しょうご", "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}], "m": "noon; midday"}, {"w": "待つ", "r": "まつ", "f": [{"text": "待", "reading": "ま"}, {"text": "つ"}], "m": "to wait"}, {"w": "正午まで待とう。", "r": "正午まで待とう。", "m": "I'll wait till noon.", "p": 1, "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "まで", "c": "pt"}, {"text": "待", "reading": "ま", "c": "vb"}, {"text": "とう", "c": "vb"}, {"text": "。"}]}, {"w": "ベル", "r": "べる", "f": [{"text": "ベル"}], "m": "bell"}, {"w": "鳴る", "r": "なる", "f": [{"text": "鳴", "reading": "な"}, {"text": "る"}], "m": "to sound; to ring; to resound"}, {"w": "ベルは正午に鳴る。", "r": "ベルは正午に鳴る。", "m": "The bell rings at noon.", "p": 1, "f": [{"text": "ベル"}, {"text": "は", "c": "pt"}, {"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "に", "c": "pt"}, {"text": "鳴", "reading": "な", "c": "vb"}, {"text": "る", "c": "vb"}, {"text": "。"}]}, {"w": "着く", "r": "つく", "f": [{"text": "着", "reading": "つ"}, {"text": "く"}], "m": "to arrive at; to reach"}, {"w": "正午に東京に着いた。", "r": "正午に東京に着いた。", "m": "I arrived in Tokyo at noon.", "p": 1, "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "に", "c": "pt"}, {"text": "東", "reading": "とう"}, {"text": "京", "reading": "きょう"}, {"text": "に", "c": "pt"}, {"text": "着", "reading": "つ", "c": "vb"}, {"text": "いた", "c": "vb"}, {"text": "。"}]}, {"w": "午", "r": "ひる", "f": [{"text": "午", "reading": "ひる"}], "m": "noon; midday"}, {"w": "午前中", "r": "ごぜんちゅう", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}], "m": "in the morning; during the morning"}]</script><script>
+<script type="application/json" id="words-data">[{"w": "午後", "r": "ごご", "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}], "m": "afternoon; p.m.", "a": "../audio/cd8c7e86fec387ea.mp3"}, {"w": "二", "r": "に", "f": [{"text": "二", "reading": "に"}], "m": "two; 2", "a": "../audio/57ce8403044e3f00.mp3"}, {"w": "時", "r": "じ", "f": [{"text": "時", "reading": "じ"}], "m": "hour; o'clock", "a": "../audio/56fa2fde128355fb.mp3"}, {"w": "午後二時です。", "r": "午後二時です。", "m": "It's two o'clock in the afternoon.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "二", "reading": "に"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}], "a": "../audio/5e60f9971e6a619b.mp3"}, {"w": "八", "r": "はち", "f": [{"text": "八", "reading": "はち"}], "m": "eight; 8", "a": "../audio/c1847ee7c4f654bd.mp3"}, {"w": "午後八時です。", "r": "午後八時です。", "m": "It's eight o'clock at night.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "八", "reading": "はち"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}], "a": "../audio/39162e5dab2d7178.mp3"}, {"w": "休み", "r": "やすみ", "f": [{"text": "休", "reading": "やす"}, {"text": "み"}], "m": "rest; recess; respite", "a": "../audio/79ffe7cec150db7d.mp3"}, {"w": "午後は休みだった。", "r": "午後は休みだった。", "m": "We had the afternoon off.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "休", "reading": "やす"}, {"text": "み"}, {"text": "だった", "c": "vb"}, {"text": "。"}], "a": "../audio/30ff1a930e4d3195.mp3"}, {"w": "どう", "r": "どう", "f": [{"text": "どう"}], "m": "how; in what way; how about", "a": "../audio/c07ee2124d037f85.mp3"}, {"w": "午後はどうだった？", "r": "午後はどうだった？", "m": "How was your afternoon?", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "どう"}, {"text": "だった", "c": "vb"}, {"text": "？"}], "a": "../audio/c8dc9f8bbcb8a684.mp3"}, {"w": "今日", "r": "きょう", "f": [{"text": "今日", "reading": "きょう"}], "m": "today; this day", "a": "../audio/31bb14f5f53a8af0.mp3"}, {"w": "暇", "r": "ひま", "f": [{"text": "暇", "reading": "ひま"}], "m": "spare time; free time; leisure", "a": "../audio/25852e9ea294030c.mp3"}, {"w": "今日の午後は暇ですか。", "r": "今日の午後は暇ですか。", "m": "Are you free this afternoon?", "p": 1, "f": [{"text": "今日", "reading": "きょう"}, {"text": "の", "c": "pt"}, {"text": "午", "reading": "ご"}, {"text": "後", "reading": "ご"}, {"text": "は", "c": "pt"}, {"text": "暇", "reading": "ひま"}, {"text": "です", "c": "vb"}, {"text": "か", "c": "pt"}, {"text": "。"}], "a": "../audio/a9000027c29abc40.mp3"}, {"w": "午前", "r": "ごぜん", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}], "m": "morning; a.m.", "a": "../audio/1358cc784d12f846.mp3"}, {"w": "午前８時です。", "r": "午前８時です。", "m": "It’s 8:00 am.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "８"}, {"text": "時", "reading": "じ"}, {"text": "です", "c": "vb"}, {"text": "。"}], "a": "../audio/4a9b98af9ff03cb8.mp3"}, {"w": "彼", "r": "かれ", "f": [{"text": "彼", "reading": "かれ"}], "m": "he; him", "a": "../audio/88d165d5aeb6fa1e.mp3"}, {"w": "起きる", "r": "おきる", "f": [{"text": "起", "reading": "お"}, {"text": "きる"}], "m": "to get up; to rise; to blaze up (fire)", "a": "../audio/2bdc9183addc7f0f.mp3"}, {"w": "彼は午前中に起きた。", "r": "彼は午前中に起きた。", "m": "He got up in the morning.", "p": 1, "f": [{"text": "彼", "reading": "かれ"}, {"text": "は", "c": "pt"}, {"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "起", "reading": "お", "c": "vb"}, {"text": "きた", "c": "vb"}, {"text": "。"}], "a": "../audio/9ef0e6b8299510c2.mp3"}, {"w": "家", "r": "いえ", "f": [{"text": "家", "reading": "いえ"}], "m": "house; residence; dwelling", "a": "../audio/d4f620ed74838dc1.mp3"}, {"w": "いる", "r": "いる", "f": [{"text": "いる"}], "m": "to be (of animate objects); to exist", "a": "../audio/1c3ebf225e5895a7.mp3"}, {"w": "午前中は家にいます。", "r": "午前中は家にいます。", "m": "I'll be at home in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "は", "c": "pt"}, {"text": "家", "reading": "いえ"}, {"text": "に", "c": "pt"}, {"text": "います", "c": "vb"}, {"text": "。"}], "a": "../audio/f384868c9d034d4a.mp3"}, {"w": "電話", "r": "でんわ", "f": [{"text": "電", "reading": "でん"}, {"text": "話", "reading": "わ"}], "m": "telephone call; phone call", "a": "../audio/b5473134a5575d19.mp3"}, {"w": "する", "r": "する", "f": [{"text": "する"}], "m": "to do; to carry out; to perform", "a": "../audio/386f894a64273eaa.mp3"}, {"w": "午前中に電話しますね。", "r": "午前中に電話しますね。", "m": "I'll give you a call in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "電", "reading": "でん", "c": "vb"}, {"text": "話", "reading": "わ", "c": "vb"}, {"text": "します", "c": "vb"}, {"text": "ね", "c": "pt"}, {"text": "。"}], "a": "../audio/64935d609eeb902d.mp3"}, {"w": "テスト", "r": "てすと", "f": [{"text": "テスト"}], "m": "test (of ability, knowledge, etc.); exam; examination", "a": "../audio/09ef2b789c3055b6.mp3"}, {"w": "ある", "r": "ある", "f": [{"text": "ある"}], "m": "to be; to exist; to live", "a": "../audio/9e6112fd8fd1c094.mp3"}, {"w": "午前中にテストがあるの。", "r": "午前中にテストがあるの。", "m": "I've got an exam in the morning.", "p": 1, "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}, {"text": "に", "c": "pt"}, {"text": "テスト"}, {"text": "が", "c": "pt"}, {"text": "ある", "c": "vb"}, {"text": "の", "c": "pt"}, {"text": "。"}], "a": "../audio/d6aa3424bca517b2.mp3"}, {"w": "正午", "r": "しょうご", "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}], "m": "noon; midday", "a": "../audio/c6ccec2523fc42fc.mp3"}, {"w": "待つ", "r": "まつ", "f": [{"text": "待", "reading": "ま"}, {"text": "つ"}], "m": "to wait", "a": "../audio/0209d696b2c5ed13.mp3"}, {"w": "正午まで待とう。", "r": "正午まで待とう。", "m": "I'll wait till noon.", "p": 1, "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "まで", "c": "pt"}, {"text": "待", "reading": "ま", "c": "vb"}, {"text": "とう", "c": "vb"}, {"text": "。"}], "a": "../audio/05e5289ef49f120d.mp3"}, {"w": "ベル", "r": "べる", "f": [{"text": "ベル"}], "m": "bell", "a": "../audio/ea35d0b2e4b52eac.mp3"}, {"w": "鳴る", "r": "なる", "f": [{"text": "鳴", "reading": "な"}, {"text": "る"}], "m": "to sound; to ring; to resound", "a": "../audio/1f72fea5b94ed212.mp3"}, {"w": "ベルは正午に鳴る。", "r": "ベルは正午に鳴る。", "m": "The bell rings at noon.", "p": 1, "f": [{"text": "ベル"}, {"text": "は", "c": "pt"}, {"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "に", "c": "pt"}, {"text": "鳴", "reading": "な", "c": "vb"}, {"text": "る", "c": "vb"}, {"text": "。"}], "a": "../audio/8e8a877f24336c25.mp3"}, {"w": "着く", "r": "つく", "f": [{"text": "着", "reading": "つ"}, {"text": "く"}], "m": "to arrive at; to reach", "a": "../audio/e6b178cea3c3817e.mp3"}, {"w": "正午に東京に着いた。", "r": "正午に東京に着いた。", "m": "I arrived in Tokyo at noon.", "p": 1, "f": [{"text": "正", "reading": "しょう"}, {"text": "午", "reading": "ご"}, {"text": "に", "c": "pt"}, {"text": "東", "reading": "とう"}, {"text": "京", "reading": "きょう"}, {"text": "に", "c": "pt"}, {"text": "着", "reading": "つ", "c": "vb"}, {"text": "いた", "c": "vb"}, {"text": "。"}], "a": "../audio/c7a6642ca754a388.mp3"}, {"w": "午", "r": "ひる", "f": [{"text": "午", "reading": "ひる"}], "m": "noon; midday", "a": "../audio/c677983be7854beb.mp3"}, {"w": "午前中", "r": "ごぜんちゅう", "f": [{"text": "午", "reading": "ご"}, {"text": "前", "reading": "ぜん"}, {"text": "中", "reading": "ちゅう"}], "m": "in the morning; during the morning", "a": "../audio/b23085c41e36b24e.mp3"}]</script><script>
 (() => {
   // Sheet: tap a word (headword or in a phrase) to see it large with furigana, meaning and audio;
   // tap a phrase's "i" button to see the whole phrase the same way, with its translation.
@@ -315,6 +347,8 @@ body.deck-page main { height:auto; display:block; padding:16px; }
     document.getElementById("sheet-meaning").textContent = w.m;
     const play = document.getElementById("sheet-play");
     play.dataset.say = w.r;
+    play.dataset.audio = w.a || "";             // recorded clip (VOICEVOX); device voice if none
+    play.classList.toggle("has-audio", !!w.a);
     play.setAttribute("aria-label", w.p ? "Play phrase" : "Play " + w.w);
     if (sheet.showModal) sheet.showModal(); else alert(w.w + " (" + w.r + "): " + w.m);
   });
@@ -323,7 +357,8 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 })();
 (() => {
   const { deck, kanji } = document.body.dataset;
-  if (deck) { try { localStorage.setItem("last:" + deck, kanji); localStorage.setItem("seen:" + kanji, "1"); } catch {} }
+  if (deck) { try { localStorage.setItem("last:" + deck, kanji); localStorage.setItem("lastat:" + deck, Date.now());
+               localStorage.setItem("seen:" + kanji, "1"); } catch {} }  // lastat: so Transfer progress keeps the newest
 })();
 (() => {
   const key = k => "learned:" + k;
@@ -342,22 +377,31 @@ body.deck-page main { height:auto; display:block; padding:16px; }
   }
 })();
 (() => {
+  // Play: the recorded clip when there is one (works on every device); otherwise the device's
+  // Japanese voice, if it has one.
   const s = window.speechSynthesis;
-  if (!s) return;
   let voice = null;
   const pick = () => {
-    voice = s.getVoices().find(v => /^ja/i.test(v.lang)) || null;
+    voice = s ? s.getVoices().find(v => /^ja/i.test(v.lang)) || null : null;
     document.documentElement.classList.toggle("tts", !!voice);
   };
   pick();
-  s.addEventListener("voiceschanged", pick);
-  document.addEventListener("click", e => {
-    const b = e.target.closest(".play");
-    if (!b || !voice) return;
+  if (s) s.addEventListener("voiceschanged", pick);
+  const speak = text => {
+    if (!voice) return;
     s.cancel();
-    const u = new SpeechSynthesisUtterance(b.dataset.say);
+    const u = new SpeechSynthesisUtterance(text);
     u.lang = "ja-JP"; u.voice = voice; u.rate = 0.9;
     s.speak(u);
+  };
+  const clip = new Audio();
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".play");
+    if (!b) return;
+    if (b.dataset.audio) {
+      clip.src = b.dataset.audio;
+      clip.play().catch(() => speak(b.dataset.say));
+    } else speak(b.dataset.say);
   });
 })();
 </script></body></html>
