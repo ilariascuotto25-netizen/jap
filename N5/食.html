@@ -5,12 +5,12 @@
 :root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
         --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
-        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; --verb:#16aa6f; }
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; --verb:#16aa6f; } }
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -30,14 +30,30 @@ main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
 .learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
          border-radius:50%; cursor:pointer; line-height:0; }
 .learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
-.learn:hover .learn-bg { fill:var(--learn-off-hover); }
-.learn[aria-pressed="false"] { box-shadow:inset 0 0 0 1px var(--line); } /* Light accent ring while unchecked */
+/* Unchecked: white circle with a lilac ring and a lilac check, so it's visible but quiet */
+.learn[aria-pressed="false"] .learn-bg { fill:var(--card); stroke:var(--hover-line); stroke-width:1.5; }
+.learn[aria-pressed="false"] path { stroke:var(--hover-line); }
+/* Hover: a deeper lilac ring and check on a light lilac fill */
+.learn[aria-pressed="false"]:hover .learn-bg { fill:var(--brand-soft); stroke:var(--hover-strong); }
+.learn[aria-pressed="false"]:hover path { stroke:var(--hover-strong); }
 .learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
 .learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
                 background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
                 padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
 .learn:hover::after, .learn:focus-visible::after { opacity:1; }
+/* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
+   (the Learned check shows a short message instead, see .toast) */
+@media (hover: none) {
+  .learn::after, .continue-btn::after, .quiz-btn::after, .transfer-btn::after { display:none; }
+}
+.toast { position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); /* inside the card, 16px above its edge */ z-index:10; display:flex; align-items:center; gap:8px;
+         padding:10px 16px 10px 14px; border-radius:999px; background:var(--pick); color:var(--pick-ink); font-size:14px; font-weight:700;
+         white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); transform:translate(-50%, 8px); opacity:0;
+         transition:opacity .2s, transform .2s; pointer-events:none; }
+.toast.on { opacity:1; transform:translate(-50%, 0); }
+.toast .learn-bg { fill:var(--learn-on); }
+.toast .ring { fill:none; stroke:currentColor; stroke-opacity:.6; stroke-width:2; }
 .kanji { font-size:96px; line-height:1; font-weight:500; }
 .info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
 .meaning { font-size:18px; line-height:1.4; font-weight:700; }
@@ -271,7 +287,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
 .card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N4:checked) .word:not([data-level="N4"]) { display:none; }.card:has(#lv-N3:checked) .word:not([data-level="N3"]) { display:none; }.card:has(#lv-N2:checked) .word:not([data-level="N2"]) { display:none; }.card:has(#lv-N1:checked) .word:not([data-level="N1"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
 <body data-deck="N5" data-kanji="食"><main><div class="top-row"><div class="position" role="img" aria-label="Card 63 of 79"><span class="position-label" aria-hidden="true">63 of 79</span><div class="position-track" aria-hidden="true"><span class="position-dot" style="left:calc((100% - 10px) * 0.7949)"></span></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
-<header><button type="button" class="learn" data-kanji="食" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">食</div>
+<header><button type="button" class="learn" data-kanji="食" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="13.25"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">食</div>
 <div class="info"><span class="lv">N5</span><div class="meaning">eat, food</div>
 <div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">ショク</span><span class="ro">shoku</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">ジキ</span><span class="ro">jiki</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">く.う</span><span class="ro">kuu</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">く.らう</span><span class="ro">kurau</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">た.べる</span><span class="ro">taberu</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">は.む</span><span class="ro">hamu</span></span></div></div></div></header>
 <div class="sections">
@@ -464,6 +480,14 @@ body.deck-page main { height:auto; display:block; padding:16px; }
   const key = k => "learned:" + k;
   const read = k => { try { return localStorage.getItem(key(k)) === "1"; } catch { return false; } };
   const write = (k, on) => { try { on ? localStorage.setItem(key(k), "1") : localStorage.removeItem(key(k)); } catch {} };
+  let box = null, timer = 0;
+  const toast = on => {
+    if (!box) { box = document.createElement("div"); box.className = "toast"; box.setAttribute("role", "status"); document.body.appendChild(box); }
+    box.innerHTML = (on ? '<svg width="18" height="18" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                       : '<svg width="18" height="18" viewBox="0 0 28 28" aria-hidden="true"><circle class="ring" cx="14" cy="14" r="13"/></svg>')
+                  + (on ? "Marked as learned" : "Removed from learned");
+    box.classList.add("on"); clearTimeout(timer); timer = setTimeout(() => box.classList.remove("on"), 2000);
+  };
   const show = (b, on) => {
     const tip = on ? "Mark as not learned" : "Mark as learned";
     b.setAttribute("aria-pressed", on); b.dataset.tip = tip; b.setAttribute("aria-label", tip);
@@ -473,6 +497,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
     b.addEventListener("click", () => {
       const on = b.getAttribute("aria-pressed") !== "true";
       write(b.dataset.kanji, on); show(b, on);
+      if (matchMedia("(hover: none)").matches) toast(on);  // touch: no tooltip, so say what happened
     });
   }
 })();

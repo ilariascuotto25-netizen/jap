@@ -5,12 +5,12 @@
 :root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
         --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
-        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --particle:#e58900; --verb:#16aa6f; }
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --particle:#e58900; --verb:#16aa6f; } }
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -30,14 +30,30 @@ main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
 .learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
          border-radius:50%; cursor:pointer; line-height:0; }
 .learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
-.learn:hover .learn-bg { fill:var(--learn-off-hover); }
-.learn[aria-pressed="false"] { box-shadow:inset 0 0 0 1px var(--line); } /* Light accent ring while unchecked */
+/* Unchecked: white circle with a lilac ring and a lilac check, so it's visible but quiet */
+.learn[aria-pressed="false"] .learn-bg { fill:var(--card); stroke:var(--hover-line); stroke-width:1.5; }
+.learn[aria-pressed="false"] path { stroke:var(--hover-line); }
+/* Hover: a deeper lilac ring and check on a light lilac fill */
+.learn[aria-pressed="false"]:hover .learn-bg { fill:var(--brand-soft); stroke:var(--hover-strong); }
+.learn[aria-pressed="false"]:hover path { stroke:var(--hover-strong); }
 .learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
 .learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
                 background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
                 padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
 .learn:hover::after, .learn:focus-visible::after { opacity:1; }
+/* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
+   (the Learned check shows a short message instead, see .toast) */
+@media (hover: none) {
+  .learn::after, .continue-btn::after, .quiz-btn::after, .transfer-btn::after { display:none; }
+}
+.toast { position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); /* inside the card, 16px above its edge */ z-index:10; display:flex; align-items:center; gap:8px;
+         padding:10px 16px 10px 14px; border-radius:999px; background:var(--pick); color:var(--pick-ink); font-size:14px; font-weight:700;
+         white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); transform:translate(-50%, 8px); opacity:0;
+         transition:opacity .2s, transform .2s; pointer-events:none; }
+.toast.on { opacity:1; transform:translate(-50%, 0); }
+.toast .learn-bg { fill:var(--learn-on); }
+.toast .ring { fill:none; stroke:currentColor; stroke-opacity:.6; stroke-width:2; }
 .kanji { font-size:96px; line-height:1; font-weight:500; }
 .info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
 .meaning { font-size:18px; line-height:1.4; font-weight:700; }
@@ -389,7 +405,8 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
 <span class="to-text"><span class="to-title">Meaning</span><span class="to-desc">See a kanji, pick its meaning</span></span></label>
 <label class="type-opt soon"><input type="radio" name="qtype" disabled><span class="radio"></span><span class="to-text"><span class="to-title">Reading</span><span class="to-desc">See a word, pick its reading</span></span><span class="tag tag-soon">Coming soon</span></label><label class="type-opt soon"><input type="radio" name="qtype" disabled><span class="radio"></span><span class="to-text"><span class="to-title">Matching</span><span class="to-desc">Match with meanings or readings</span></span><span class="tag tag-soon">Coming soon</span></label></div></div>
 <div><h2 class="q-label">Length</h2>
-<div class="chips" id="len-chips"><button type="button" class="chip" data-len="10" aria-pressed="true">10</button>
+<div class="chips" id="len-chips"><button type="button" class="chip" data-len="all" id="len-all" aria-pressed="false" hidden>Selected kanji · <span class="n">0</span></button>
+<button type="button" class="chip" data-len="10" aria-pressed="true">10</button>
 <button type="button" class="chip" data-len="20" aria-pressed="false">20</button></div></div>
 </div>
 <div class="q-foot"><p class="q-summary" id="summary" aria-live="polite"></p>
@@ -453,8 +470,11 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
 
   // Settings, remembered per deck
   let saved = {}; try { saved = JSON.parse(get("quiz:" + D.level)) || {}; } catch {}
-  const S = { source: saved.source || "all", custom: (saved.custom || []).filter(k => byK[k]), length: saved.length === 20 ? 20 : 10 };
+  // length: 10, 20, or "all" (one question per selected kanji; only offered for a picked selection)
+  const S = { source: saved.source || "all", custom: (saved.custom || []).filter(k => byK[k]),
+              length: [10, 20, "all"].includes(saved.length) ? saved.length : 10 };
   if (S.source === "custom" && !S.custom.length) S.source = "all";
+  if (S.source !== "custom" && S.length === "all") S.length = 10;
   const save = () => put("quiz:" + D.level, JSON.stringify(S));
   const chosen = () => S.source === "custom" ? S.custom : pools()[S.source] || all;
 
@@ -476,24 +496,28 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
     }
     const custom = S.source === "custom";
     $("choose-row").classList.toggle("chosen", custom);
-    $("choose-title").textContent = custom ? S.custom.length + " kanji chosen" : "Pick";
+    $("choose-title").textContent = custom ? "Selected kanji" : "Pick";
     $("choose-desc").textContent = custom ? S.custom.join(" ") : "Select specific kanji from the deck";
     $("choose-desc").lang = custom ? "ja" : "en";
     $("choose-edit").hidden = !custom;
-    for (const b of $("len-chips").querySelectorAll(".chip")) b.setAttribute("aria-pressed", +b.dataset.len === S.length);
-    const n = chosen().length, q = Math.min(n, S.length);
+    $("len-all").hidden = !custom;
+    $("len-all").querySelector(".n").textContent = S.custom.length;
+    for (const b of $("len-chips").querySelectorAll(".chip")) b.setAttribute("aria-pressed", String(b.dataset.len) === String(S.length));
+    const n = chosen().length, q = total();
     $("summary").textContent = n === 0 ? "No kanji in this group yet"
-      : n < S.length ? `${q} question${q > 1 ? "s" : ""}, one per ${custom ? "chosen " : ""}kanji`
-      : `${q} questions from ${n} kanji`;
+      : q === n ? `${q} question${q > 1 ? "s" : ""}, one per kanji`
+      : q > n ? (n === 1 ? `${q} questions on 1 kanji` : `${q} questions from ${n} kanji (each asked more than once)`)
+      : `${q} questions from ${n} kanji (missed and new ones first)`;
     $("start").disabled = n === 0;
   }
+  const total = () => S.length === "all" ? chosen().length : S.length;   // number of questions
   $("src-chips").addEventListener("click", e => {
     const b = e.target.closest(".chip"); if (!b || b.disabled) return;
-    S.source = b.dataset.src; save(); renderSetup();
+    S.source = b.dataset.src; if (S.length === "all") S.length = 10; save(); renderSetup();
   });
   $("len-chips").addEventListener("click", e => {
     const b = e.target.closest(".chip"); if (!b) return;
-    S.length = +b.dataset.len; save(); renderSetup();
+    S.length = b.dataset.len === "all" ? "all" : +b.dataset.len; save(); renderSetup();
   });
 
   // ---- Picker
@@ -515,7 +539,8 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
   $("pick-clear").addEventListener("click", () => { picking.clear(); renderPick(); });
   $("pick-back").addEventListener("click", () => show("setup"));
   $("pick-use").addEventListener("click", () => {
-    S.custom = all.filter(k => picking.has(k)); S.source = "custom"; save(); renderSetup(); show("setup");
+    // A fresh selection starts as "one question per selected kanji"; 10 or 20 can still be picked after.
+    S.custom = all.filter(k => picking.has(k)); S.source = "custom"; S.length = "all"; save(); renderSetup(); show("setup");
   });
 
   // ---- Questions. Wrong answers come back once, in a second round at the end.
@@ -548,9 +573,27 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
     $("feedback").hidden = true;
     show("question");
   }
+  // Which kanji the questions use. With more kanji than questions: the ones you got wrong last
+  // time first, then ones never quizzed, then the ones quizzed longest ago (ties at random).
+  // With fewer: every kanji once, then again in a new order, never the same one twice in a row.
+  const stats = () => { try { return JSON.parse(get("quizstat:" + D.level)) || {}; } catch { return {}; } };
+  function pickQuestions(pool, n) {
+    if (pool.length >= n) {
+      const st = stats(), rank = k => { const s = st[k]; return !s ? [1, 0] : s[1] ? [2, s[0]] : [0, s[0]]; };
+      const ordered = shuffle(pool).sort((a, b) => { const x = rank(a), y = rank(b); return x[0] - y[0] || x[1] - y[1]; });
+      return shuffle(ordered.slice(0, n));
+    }
+    const out = [];
+    while (out.length < n) {
+      let round = shuffle(pool);
+      if (pool.length > 1 && round[0] === out[out.length - 1]) round.push(round.shift());
+      out.push(...round.slice(0, n - out.length));
+    }
+    return out;
+  }
   $("start").addEventListener("click", () => {
-    Q = { main: shuffle(chosen()).slice(0, S.length), review: [], round: "main", i: 0,
-          first: new Set(), second: new Set(), missed: [] };
+    Q = { main: pickQuestions(chosen(), total()), review: [], round: "main", i: 0,
+          right: 0, wrongK: new Set(), second: new Set(), missed: [] };
     ask();
   });
   $("answers").addEventListener("click", e => {
@@ -562,8 +605,11 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
       x.classList.add(cls);
       if (cls !== "dim") x.querySelector(".a-icon").innerHTML = cls === "correct" ? CHECK : CROSS;
     }
-    if (Q.round === "main") { if (ok) Q.first.add(k); else Q.missed.push(k); }
-    else if (ok) Q.second.add(k);
+    if (Q.round === "main") {
+      if (ok) Q.right++; else if (!Q.wrongK.has(k)) { Q.wrongK.add(k); Q.missed.push(k); }   // missed list: once per kanji
+      // missed once in this quiz = comes first next time
+      const st = stats(); st[k] = [Date.now(), Q.wrongK.has(k) ? 0 : 1]; put("quizstat:" + D.level, JSON.stringify(st));
+    } else if (ok) Q.second.add(k);
     const fb = $("feedback");
     fb.className = "feedback " + (ok ? "ok" : "no");
     $("fb-title").textContent = ok ? "Correct!" : "Not quite";
@@ -595,7 +641,7 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
   let toMark = [];
   function results() {
     const n = Q.main.length;
-    $("r-num").textContent = Q.first.size + " / " + n;
+    $("r-num").textContent = Q.right + " / " + n;
     $("r-second").hidden = !Q.second.size;
     $("r-second").textContent = `${Q.second.size} right on the second try`;
     const list = $("r-list"); list.innerHTML = "";
@@ -612,7 +658,7 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
     }
     $("r-missed").hidden = !Q.missed.length;
     $("r-none").hidden = !!Q.missed.length;
-    toMark = Q.main.filter(k => Q.first.has(k) && !isLearned(k));
+    toMark = [...new Set(Q.main)].filter(k => !Q.wrongK.has(k) && !isLearned(k));   // right every time it was asked
     $("r-learn").hidden = !toMark.length;
     $("r-done").hidden = true;
     const one = toMark.length === 1;
@@ -620,7 +666,7 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
     $("r-glyphs").innerHTML = "";
     for (const k of toMark) { const s = document.createElement("span"); s.lang = "ja"; s.textContent = k; $("r-glyphs").appendChild(s); }
     $("r-mark").textContent = one ? "Mark as learned" : `Mark all ${toMark.length}`;
-    put("quizlast:" + D.level, JSON.stringify({ date: new Date().toISOString(), score: Q.first.size, total: n }));
+    put("quizlast:" + D.level, JSON.stringify({ date: new Date().toISOString(), score: Q.right, total: n }));
     show("results");
   }
   $("r-mark").addEventListener("click", () => {
