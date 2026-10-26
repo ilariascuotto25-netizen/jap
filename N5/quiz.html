@@ -441,7 +441,7 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
 <p class="q-sub">N5 kanji</p>
 <div class="q-card">
 <div><h2 class="q-label">Kanji</h2>
-<div class="chips" id="src-chips"><button type="button" class="chip" data-src="all" aria-pressed="false">All · <span class="n">0</span></button><button type="button" class="chip" data-src="learned" aria-pressed="false">Learned · <span class="n">0</span></button><button type="button" class="chip" data-src="new" aria-pressed="false">New · <span class="n">0</span></button><button type="button" class="chip" data-src="notlearned" aria-pressed="false">Not learned · <span class="n">0</span></button></div>
+<div class="chips" id="src-chips"><button type="button" class="chip" data-src="all" aria-pressed="false">All · <span class="n">0</span></button><button type="button" class="chip" data-src="missed" aria-pressed="false">Missed last time · <span class="n">0</span></button><button type="button" class="chip" data-src="learned" aria-pressed="false">Learned · <span class="n">0</span></button><button type="button" class="chip" data-src="notlearned" aria-pressed="false">Not learned · <span class="n">0</span></button></div>
 <button type="button" class="choose-row" id="choose-row" aria-haspopup="true">
 <span class="cr-text"><span class="cr-title" id="choose-title">Pick</span><span class="cr-desc" id="choose-desc">Select specific kanji from the deck</span></span>
 <span class="cr-edit" id="choose-edit" hidden>Edit</span><span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3.5l4.5 4.5L6 12.5" stroke="#310A3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
@@ -526,10 +526,10 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
   const byK = Object.fromEntries(D.kanji.map(x => [x.k, x]));
   const allReadings = Object.values(D.words).flat().map(w => w.r);   // fallback wrong answers
   const isLearned = k => get("learned:" + k) === "1";
-  const isSeen = k => isLearned(k) || get("seen:" + k) === "1";
-  // Kanji groups for the chips; "new" = never opened.
-  const pools = () => ({ all, learned: all.filter(isLearned), new: all.filter(k => !isSeen(k)),
-                         notlearned: all.filter(k => !isLearned(k)) });
+  // Kanji groups for the chips; "missed" = missed in your last quiz of this type.
+  const missedKey = () => "quizmissed:" + D.level + ":" + S.type;
+  const lastMissed = () => { try { const m = JSON.parse(get(missedKey())) || []; return all.filter(k => m.includes(k)); } catch { return []; } };
+  const pools = () => ({ all, missed: lastMissed(), learned: all.filter(isLearned), notlearned: all.filter(k => !isLearned(k)) });
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   // Settings, remembered per deck
@@ -553,10 +553,14 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
   // ---- Setup
   function renderSetup() {
     const p = pools();
+    const offered = src => src === "all" || ((p[src] || []).length > 0 && p[src].length < all.length);
+    if (S.source !== "custom" && !offered(S.source)) S.source = "all";   // hidden group (or the old "New"): back to All
     for (const b of $("src-chips").querySelectorAll(".chip")) {
       const n = p[b.dataset.src].length;
       b.querySelector(".n").textContent = n;
       b.disabled = n === 0;
+      // a group with no kanji, or the same as All (nothing learned yet: Not learned = All), isn't offered
+      b.hidden = b.dataset.src !== "all" && (n === 0 || n === all.length);
       b.setAttribute("aria-pressed", S.source === b.dataset.src);
     }
     const custom = S.source === "custom";
@@ -901,6 +905,7 @@ button.nav-btn { border:0; cursor:pointer; font:inherit; }
     for (const k of toMark) { const s = document.createElement("span"); s.lang = "ja"; s.textContent = k; $("r-glyphs").appendChild(s); }
     $("r-mark").textContent = one ? "Mark as learned" : `Mark all ${toMark.length}`;
     put("quizlast:" + D.level, JSON.stringify({ date: new Date().toISOString(), type: Q.type, score: Q.right, total: n }));
+    put("quizmissed:" + D.level + ":" + Q.type, JSON.stringify(Q.missed));   // for "Missed last time" (empty = chip hidden)
     show("results");
   }
   $("r-mark").addEventListener("click", () => {
