@@ -213,6 +213,12 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 /* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
 .dc-chev-space { flex:none; width:10px; }
 .deck-card.soon { opacity:.5; }
+.deck-card.soon > .tag-soon { flex:none; background:var(--light-gray); color:var(--muted); }   /* Coming soon, on the right */
+.dc-level-glyph { font-size:22px; }                     /* 字, は */
+.dc-level-small { font-size:16px; font-weight:700; }   /* 人間, ^_^ */
+/* Locked level: grey circle with a lock where the chevron would be */
+.dc-lock { flex:none; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center;
+           border-radius:50%; background:var(--light-gray); color:var(--muted); }
 
 /* Deck page */
 body.deck-page main { height:auto; display:block; padding:16px; }

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N5 JLPT</title><style>
+:root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
+        --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
+        --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
+          --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
+          --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f; } }
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
+       font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif; }
+main { max-width:592px; height:100%; margin:0 auto; padding:0 16px;
+       display:flex; flex-direction:column; justify-content:center; }
+.card { background:var(--card); border-radius:20px; border:1px solid var(--line); padding:24px 20px; box-shadow:var(--soft-shadow);
+        height:min(90%, calc(100% - 144px)); overflow-y:auto; overscroll-behavior:contain;
+        display:flex; flex-direction:column; gap:24px; }
+.card > * { flex:none; }
+.icon { display:inline-flex; flex:none; }
+.icon path[stroke] { stroke:var(--brand); }
+.icon path[fill]:not([fill="none"]) { fill:var(--brand); }
+
+.card > header { position:relative; display:flex; align-items:flex-start; gap:16px; padding-bottom:20px; }
+/* "Learned" toggle: top-right corner, centred on the level badge's row */
+.learn { position:absolute; top:2px; right:0; width:24px; height:24px; padding:0; border:0; background:none;
+         border-radius:50%; cursor:pointer; line-height:0; }
+.learn .learn-bg { fill:var(--learn-off); transition:fill .15s; }
+/* Unchecked: white circle with a lilac ring and a lilac check, so it's visible but quiet */
+.learn[aria-pressed="false"] .learn-bg { fill:var(--card); stroke:var(--hover-line); stroke-width:1.5; }
+.learn[aria-pressed="false"] path { stroke:var(--hover-line); }
+/* Hover: a deeper lilac ring and check on a light lilac fill */
+.learn[aria-pressed="false"]:hover .learn-bg { fill:var(--brand-soft); stroke:var(--hover-strong); }
+.learn[aria-pressed="false"]:hover path { stroke:var(--hover-strong); }
+.learn[aria-pressed="true"] .learn-bg { fill:var(--learn-on); }
+.learn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.learn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; }
+.learn:hover::after, .learn:focus-visible::after { opacity:1; }
+/* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
+   (the Learned check shows a short message instead, see .toast) */
+@media (hover: none) {
+  .learn::after, .continue-btn::after, .quiz-btn::after, .transfer-btn::after { display:none; }
+}
+.toast { position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); /* inside the card, 16px above its edge */ z-index:10; display:flex; align-items:center; gap:8px;
+         padding:10px 16px 10px 14px; border-radius:999px; background:var(--pick); color:var(--pick-ink); font-size:14px; font-weight:700;
+         white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); transform:translate(-50%, 8px); opacity:0;
+         transition:opacity .2s, transform .2s; pointer-events:none; }
+.toast.on { opacity:1; transform:translate(-50%, 0); }
+.toast .learn-bg { fill:var(--learn-on); }
+.toast .ring { fill:none; stroke:currentColor; stroke-opacity:.6; stroke-width:2; }
+.kanji { font-size:96px; line-height:1; font-weight:500; }
+.info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
+.meaning { font-size:18px; line-height:1.4; font-weight:700; }
+.readings { align-self:stretch; display:flex; flex-direction:column; gap:2px; padding-top:4px; }
+.rrow { display:flex; align-items:baseline; gap:8px; }
+.rl { width:28px; flex:none; font-size:12px; color:var(--brand); }
+.rv { flex:1; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:14px; }
+.rv .ro { font-size:12px; }
+.ro { color:var(--muted); }
+
+.lv { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; line-height:1.5;
+      padding:1px 7px; border-radius:999px; background:var(--light-gray); color:var(--tag-ink); white-space:nowrap; }
+.lv.unrated { color:var(--unrated); font-weight:500; }
+
+.sections { display:flex; flex-direction:column; gap:16px; }
+details.sec { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+summary { cursor:pointer; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+details.sec > summary { background:var(--read-tint); padding:10px 14px;
+                        display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.sl { display:flex; align-items:center; gap:8px; }
+.sec-chev { transform:rotate(-90deg); transition:transform .15s; }
+details.sec[open] > summary .sec-chev { transform:none; }
+h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--brand); margin:0; }
+.count { font-size:12px; color:var(--brand); }
+
+.radicals { padding:16px; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.radical { display:flex; align-items:center; gap:16px; padding:8px 16px; border:1px solid var(--line);
+           border-radius:10px; line-height:1.3; }
+.radical .rg { font-size:24px; }
+.radical .rm { font-size:12px; color:var(--muted); }
+
+.vocab { padding:8px 14px; }
+.picker { display:flex; flex-wrap:wrap; gap:6px 4px; padding-bottom:12px; }
+.picker input { position:absolute; opacity:0; pointer-events:none; }
+.picker label { font-size:12.8px; font-weight:700; padding:4px 9px; border-radius:999px; cursor:pointer;
+                border:1px solid var(--line); color:var(--brand); }
+.picker input:checked + label { background:var(--pick); color:var(--pick-ink); border-color:var(--pick); }
+.picker input:focus-visible + label { outline:2px solid var(--brand); outline-offset:2px; }
+
+.word { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:16px 0; }
+/* Word and meaning: Light accent line on the left */
+.word-main { align-self:stretch; display:flex; flex-direction:column; gap:4px; padding-left:12px;
+             border-left:3px solid var(--line); }
+.word-head { align-self:stretch; display:flex; justify-content:space-between; align-items:flex-end; gap:8px; }
+.wl { display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px 10px; min-width:0; }
+.lv-wrap { padding-bottom:6px; flex:none; }
+.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; }
+.wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
+.word-en { font-size:16px; color:var(--muted); }
+
+details.ph { align-self:stretch; margin-top:6px; border:2px solid var(--light-gray); }
+details.ph > summary { background:var(--light-gray); }
+details.ph .none { margin:0; padding:12px 14px; }
+ul.phrases { list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:16px; }
+/* Phrase and translation on the left; the "i" button has its own column on the right, level with the
+   phrase's first line, so the translation never runs underneath it */
+ul.phrases li { display:grid; grid-template-columns:1fr auto; gap:2px 16px; }
+.ph-row { display:contents; }
+ul.phrases li .info-btn { grid-column:2; grid-row:1 / span 2; align-self:start; margin-top:1px; }
+ul.phrases li .ph-en { grid-column:1; }
+.ph-ja { font-size:16.8px; }
+.ph-en { font-size:14.4px; color:var(--muted); }
+
+/* Tappable words: light accent highlight on hover, details in the bottom sheet */
+.w { font:inherit; color:inherit; background:none; border:0; padding:0 2px; margin:0 -2px; border-radius:4px;
+     cursor:pointer; transition:background .12s; }
+.w:hover { background:var(--brand-soft); }
+.w:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+.pt { color:var(--particle); } /* particles in phrases: は, が, を, に… */
+.vb { color:var(--verb); } /* whole verb expressions in phrases: 入学した, ありません, です… */
+.w.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; } /* headwords keep their size as buttons */
+/* Bottom sheet: slides up from the bottom; closes with ×, Esc or a tap outside */
+dialog.sheet { position:fixed; inset:auto 0 0 0; margin:0 auto; padding:0; width:100%; max-width:592px; max-height:85vh;
+               border:0; border-radius:20px 20px 0 0; background:var(--card); color:var(--ink);
+               box-shadow:0 -4px 24px rgba(26,20,77,.12); }
+dialog.sheet[open] { animation:sheet-up .22s ease-out; }
+@keyframes sheet-up { from { transform:translateY(100%); } to { transform:none; } }
+dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
+.sheet-body { position:relative; padding:12px 24px 32px; text-align:center; outline:none; }
+.sheet-handle { display:block; width:40px; height:4px; margin:0 auto; border-radius:2px; background:var(--brand-soft); }
+.sheet-close { position:absolute; top:12px; right:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
+.sheet-word { margin:24px 0 4px; font-size:44px; font-weight:700; line-height:1.5; }
+.sheet-word rt { font-size:16px; font-weight:500; color:var(--muted); }
+.sheet-meaning { margin:0 0 20px; font-size:16px; color:var(--muted); }
+/* A whole phrase: smaller than a single word so a sentence fits in a few lines */
+.sheet.is-phrase .sheet-word { margin-top:32px; font-size:26px; font-weight:500; line-height:2; }
+.sheet.is-phrase .sheet-word rt { font-size:12px; }
+.sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
+/* Phrase "i" button: opens the sheet with the whole phrase */
+.info-btn { flex:none; display:inline-flex; width:24px; height:24px; padding:0; border:0; background:none;
+            color:var(--brand); cursor:pointer; border-radius:50%; line-height:0; }
+.info-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.sheet .play svg { width:20px; height:20px; }
+.play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
+.tts .play, .play.has-audio { display:inline-flex; }
+.play:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.none { color:var(--muted); font-size:14.4px; font-style:italic; margin:6px 0 0; }
+
+.top-row { flex:none; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.progress { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.progress-legend { display:flex; justify-content:space-between; font-size:12px; font-weight:700;
+                   letter-spacing:.02em; color:var(--brand); }
+.progress-track { height:6px; border-radius:999px; background:var(--brand-soft); overflow:hidden; }
+.progress-fill { height:100%; border-radius:999px; background:var(--brand); }
+.progress-legend .count { margin-left:8px; }
+/* Card page: where this card sits in the deck (not progress): "30 of 79" and a dot on a thin line */
+.position { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.position-label { font-size:12px; font-weight:700; letter-spacing:.02em; color:var(--brand); }
+.position-track { position:relative; height:10px; }
+.position-track::before { content:""; position:absolute; left:0; right:0; top:3px; height:4px; border-radius:2px; background:var(--brand-soft); }
+.position-dot { position:absolute; top:0; width:10px; height:10px; border-radius:50%; background:var(--brand); }
+.deck-nav { flex:none; display:flex; justify-content:center; gap:24px; margin-top:16px; }
+.nav-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px;
+           background:var(--button); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow);
+           font-size:14px; font-weight:700; text-decoration:none; transition:background .12s; }
+.nav-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.nav-btn[aria-disabled="true"] { opacity:.4; box-shadow:none; pointer-events:none; }
+.nav-back .icon { transform:scaleX(-1); }
+/* Back / Next: round, icon only; 44px keeps them an easy touch target on phones */
+.nav-back, .nav-next { width:44px; padding:0; justify-content:center; }
+.nav-back svg, .nav-next svg { width:14px; height:14px; }
+.close-btn, .back-btn, .continue-btn, .quiz-btn, .transfer-btn { flex:none; width:36px; height:36px; padding:0; justify-content:center; }
+/* Continue: beside the deck's progress bar; tooltip like "Mark as learned" */
+.bar-row { display:flex; align-items:center; gap:12px; }
+.bar-row .progress { flex:1; }
+.continue-btn, .quiz-btn, .transfer-btn { position:relative; border:0; cursor:pointer; font:inherit; }
+.continue-btn::after, .quiz-btn::after, .transfer-btn::after { content:attr(data-tip); position:absolute; top:calc(100% + 8px); right:0; white-space:nowrap;
+                       background:var(--brand); color:#fff; font-size:12px; font-weight:700; line-height:1.4;
+                       padding:5px 9px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s; z-index:1; }
+.continue-btn:hover::after, .continue-btn:focus-visible::after,
+.quiz-btn:hover::after, .quiz-btn:focus-visible::after,
+.transfer-btn:hover::after, .transfer-btn:focus-visible::after { opacity:1; }
+.deck-title { display:flex; align-items:center; gap:12px; min-width:0; }
+
+/* Main page: one card per JLPT level */
+.decks { display:flex; flex-direction:column; gap:12px; }
+.deck-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--card); border-radius:16px;
+             border:1px solid var(--line);
+             text-decoration:none; color:var(--ink); transition:background .12s; }
+/* one 1px border; hover and "current" thicken it to 2px with an inset ring, so nothing shifts */
+a.deck-card:hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
+a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.dc-level { flex:none; display:flex; align-items:center; justify-content:center; width:48px; height:48px;
+            border-radius:12px; background:var(--brand-soft); color:var(--brand); font-size:18px; font-weight:700; }
+.dc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
+.dc-meta { font-size:13px; color:var(--muted); }
+.dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.dc-tags { flex:none; display:flex; gap:6px; }
+.tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
+       line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
+.tag-progress { background:var(--pick); color:var(--pick-ink); }
+.tag-learned { background:var(--learn-on); color:var(--learn-ink); }
+.tag-soon { background:var(--tag); color:var(--tag-ink); }
+/* keeps "Coming soon" tags in line with the tags of decks that have a chevron */
+.dc-chev-space { flex:none; width:10px; }
+.deck-card.soon { opacity:.5; }
+.deck-card.soon > .tag-soon { flex:none; background:var(--light-gray); color:var(--muted); }   /* Coming soon, on the right */
+.dc-level-glyph { font-size:22px; }                     /* 字, は */
+.dc-level-small { font-size:16px; font-weight:700; }   /* 人間, ^_^ */
+/* Locked level: grey circle with a lock where the chevron would be */
+.dc-lock { flex:none; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center;
+           border-radius:50%; background:var(--light-gray); color:var(--muted); }
+
+/* Deck page */
+body.deck-page main { height:auto; display:block; padding:16px; }
+.deck-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; }
+.deck-head h1 { font-size:24px; line-height:1.3; margin:0; color:var(--ink); }
+.deck-bars { display:flex; flex-direction:column; gap:14px; padding-top:8px; margin-bottom:24px; }
+.progress-fill.learned-fill { background:var(--learn-on); }
+.deck-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+@media (min-width:520px) { .deck-grid { grid-template-columns:repeat(6, 1fr); } }
+.tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px;
+        background:var(--card); border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+        transition:background .12s; }
+.tile:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.tile.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.tk { font-size:32px; line-height:1.2; font-weight:500; }
+.tm { max-width:100%; padding:0 4px; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile-check { position:absolute; top:6px; right:6px; display:none; line-height:0; }
+.tile-check .learn-bg { fill:var(--learn-on); }
+.tile.learned .tile-check { display:block; }
+
+/* Deck page, list view: one elongated card per kanji */
+.deck-list { display:flex; flex-direction:column; gap:8px; }
+.row { display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--card);
+       border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink);
+       transition:background .12s; }
+.row:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.row.current { border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.rk { flex:none; width:40px; text-align:center; font-size:30px; line-height:1.2; font-weight:500; }
+.rmn { flex:1; min-width:0; font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* the check shows only once learned, as in the grid view */
+.row-check { flex:none; line-height:0; visibility:hidden; }
+.row-check .learn-bg { fill:var(--learn-on); }
+.row.learned .row-check { visibility:visible; }
+/* Read = opened at least once: a faint lavender tint, in both views */
+.row.read, .tile.read { background:var(--read-tint); }
+/* Hover: mid-lavender border, between light accent and the Dark accent "last opened" outline */
+.row:not(.current):hover, .tile:not(.current):hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
+.deck-list[hidden], .deck-grid[hidden] { display:none; }
+/* List / Grid switch */
+.view-tabs { flex:none; display:inline-flex; gap:2px; padding:3px; background:var(--switch); border-radius:999px;
+             box-shadow:inset 0 0 0 1px var(--line); }
+.view-tabs button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:30px; padding:0; border:0;
+                    border-radius:999px; background:none; color:var(--brand); font:inherit; font-size:12.8px;
+                    font-weight:700; cursor:pointer; transition:background .12s, color .12s; }
+.view-tabs button:hover { background:var(--switch-hover); }
+.view-tabs button[aria-selected="true"] { background:var(--pick); color:var(--pick-ink); }
+.view-tabs button:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.view-tabs svg { display:block; }
+/* Shared by the quiz and the main page's dialogs: buttons, radio cards */
+.type-opt { display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--line); border-radius:14px;
+            background:var(--card); cursor:pointer; }
+.type-opt input { position:absolute; opacity:0; pointer-events:none; }
+.type-opt:has(input:checked) { background:var(--read-tint); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); }
+.radio { flex:none; width:20px; height:20px; border-radius:50%; box-shadow:inset 0 0 0 1.5px var(--hover-line); }
+.type-opt:has(input:checked) .radio { box-shadow:inset 0 0 0 2px var(--brand), inset 0 0 0 5px var(--read-tint); background:var(--brand); }
+.to-text { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.to-title { font-size:15px; font-weight:700; }
+.to-desc { font-size:13px; color:var(--muted); line-height:1.4; }
+.q-btn { width:100%; height:48px; display:inline-flex; align-items:center; justify-content:center; padding:0 24px;
+         border:0; border-radius:999px; font:inherit; font-size:15px; font-weight:700; cursor:pointer; text-decoration:none;
+         background:var(--pick); color:var(--pick-ink); }
+.q-btn.secondary { background:var(--card); color:var(--brand); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.q-btn:disabled { opacity:.4; cursor:default; }
+/* Small centred dialog: "Leave the quiz?", "Transfer progress" */
+.app-dialog { width:calc(100% - 32px); max-width:340px; padding:28px 20px 20px; border:0; border-radius:20px;
+                background:var(--card); color:var(--ink); box-shadow:var(--shadow); text-align:center; }
+.app-dialog::backdrop { background:rgba(26,20,77,.35); }
+.ad-title { margin:0 0 4px; font-size:18px; font-weight:700; }
+.ad-text { margin:0; font-size:14px; color:var(--muted); }
+.ad-btns { display:flex; gap:8px; margin-top:20px; }
+.ad-btns .q-btn { flex:1; width:auto; padding:0 12px; }
+.q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
+</style></head>
+<body class="deck-page"><main>
+<header class="deck-head"><div class="deck-title"><a class="nav-btn back-btn" href="../index.html" aria-label="Back to all levels"><span class="icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M8.5 5H1.5M4.5 1.5L1 5L4.5 8.5" stroke="#310A3E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><h1>N5 JLPT</h1></div></header>
+<nav class="decks" aria-label="N5 sections"><a class="deck-card" href="index.html" data-section="kanji"><span class="dc-level dc-level-glyph" lang="ja" aria-hidden="true">字</span><span class="dc-body"><span class="dc-head"><span class="dc-title">Kanji</span><span class="dc-tags"><span class="tag tag-progress" title="Progress">0%</span><span class="tag tag-learned">0% learned</span></span></span><span class="dc-meta">79 kanji</span></span><span class="icon " aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/chevron-right">
+<path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
+</g>
+</svg></span></a><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-glyph" lang="ja" aria-hidden="true">は</span><span class="dc-body"><span class="dc-title">Grammar</span><span class="dc-meta">Particles and sentence patterns</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">人間</span><span class="dc-body"><span class="dc-title">Vocabulary</span><span class="dc-meta">Words by topic</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">^_^</span><span class="dc-body"><span class="dc-title">Conversation</span><span class="dc-meta">Everyday phrases</span></span><span class="tag tag-soon">Coming soon</span></div></nav>
+</main><script type="application/json" id="level-data">{"level": "N5", "kanji": ["日", "一", "国", "人", "年", "大", "十", "二", "本", "中", "長", "出", "三", "時", "行", "見", "月", "後", "前", "生", "五", "間", "上", "東", "四", "今", "金", "九", "入", "学", "高", "円", "子", "外", "八", "六", "下", "来", "気", "小", "七", "山", "話", "女", "北", "午", "百", "書", "先", "名", "川", "千", "水", "半", "男", "西", "電", "校", "語", "土", "木", "聞", "食", "車", "何", "南", "万", "毎", "白", "天", "母", "火", "右", "読", "友", "左", "休", "父", "雨"]}</script><script>
+(() => {
+  // Kanji card on a level page: progress (opened) and learned, as on the deck page
+  const deck = JSON.parse(document.getElementById("level-data").textContent);
+  const get = k => { try { return localStorage.getItem(k); } catch { return null; } };
+  const card = document.querySelector(".deck-card[data-section=kanji]");
+  const pct = n => Math.round(n / deck.kanji.length * 100) + "%";
+  const opened = deck.kanji.filter(k => get("learned:" + k) === "1" || get("seen:" + k) === "1").length;
+  const learned = deck.kanji.filter(k => get("learned:" + k) === "1").length;
+  const prog = card.querySelector(".tag-progress");
+  prog.textContent = pct(opened); prog.setAttribute("aria-label", pct(opened) + " progress");
+  card.querySelector(".tag-learned").textContent = pct(learned) + " learned";
+})();
+</script></body></html>
