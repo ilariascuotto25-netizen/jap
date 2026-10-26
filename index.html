@@ -207,6 +207,7 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 .dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
 .dc-meta { font-size:13px; color:var(--muted); }
 .dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.dc-head:has(.ai-tag) { justify-content:flex-start; flex-wrap:nowrap; }
 .dc-tags { flex:none; display:flex; gap:6px; }
 .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
        line-height:1.5; letter-spacing:.02em; white-space:nowrap; }

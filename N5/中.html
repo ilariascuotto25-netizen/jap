@@ -207,6 +207,7 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 .dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
 .dc-meta { font-size:13px; color:var(--muted); }
 .dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.dc-head:has(.ai-tag) { justify-content:flex-start; flex-wrap:nowrap; }
 .dc-tags { flex:none; display:flex; gap:6px; }
 .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
        line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
@@ -294,11 +295,36 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .ad-btns { display:flex; gap:8px; margin-top:20px; }
 .ad-btns .q-btn { flex:1; width:auto; padding:0 12px; }
 .q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
+
+:root { --ai-tint:#f3e8ff; --ai:#8a2be2; --ai-ink:#5a1a9e; }
+@media (prefers-color-scheme: dark) { :root { --ai-tint:#2a1d44; --ai:#a66cf0; --ai-ink:#d9c2ff; } }
+.ai-tag { flex:none; display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 8px; border-radius:999px;
+          background:var(--ai); color:#fff; font-size:11px; font-weight:700; line-height:13px; letter-spacing:0; text-transform:none; }
+.ai-tag svg { width:10px; height:10px; }
+.ai-tag.off { opacity:.7; } /* coming soon: still purple, faded (its card is faded too) */
+.ai-box { display:flex; flex-direction:column; gap:8px; padding:14px; border-radius:14px; background:var(--ai-tint); text-align:left; }
+.ai-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.ai-label { margin:0; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--ai-ink); }
+.ai-text { margin:0; font-size:15px; line-height:1.5; color:var(--ink, #1d1b18); }
+
+.story { margin-top:-8px; }
+.story-text b { font-weight:700; }
+.story-actions { display:flex; align-items:center; gap:8px; }
+.story-prompt { flex:1; font-size:12px; font-weight:500; color:var(--muted); }
+.story.kept .story-prompt { color:var(--ai-ink); }
+.round-btn { flex:none; display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0;
+             border:0; border-radius:50%; background:var(--button); color:var(--brand); cursor:pointer;
+             box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
+.round-btn:hover { box-shadow:inset 0 0 0 1px var(--hover-line), var(--soft-shadow); }
+.round-btn:focus-visible { outline:2px solid var(--ai); outline-offset:2px; }
+.story-keep[aria-pressed="true"] { background:var(--ai); color:#fff; box-shadow:none; }
+.story-next[hidden] { display:none; }
 .card:has(#lv-N5:checked) .word:not([data-level="N5"]) { display:none; }.card:has(#lv-N4:checked) .word:not([data-level="N4"]) { display:none; }.card:has(#lv-N3:checked) .word:not([data-level="N3"]) { display:none; }.card:has(#lv-N2:checked) .word:not([data-level="N2"]) { display:none; }.card:has(#lv-N1:checked) .word:not([data-level="N1"]) { display:none; }.card:has(#lv-all:checked) .ph-lvl { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .ph-all { display:none; }.card:has(input[name=lvl]:not(#lv-all):checked) .word .lv-wrap { display:none; }</style></head>
 <body data-deck="N5" data-kanji="中"><main><div class="top-row"><div class="position" role="img" aria-label="Card 10 of 79"><span class="position-label" aria-hidden="true">10 of 79</span><div class="position-track" aria-hidden="true"><span class="position-dot" style="left:calc((100% - 10px) * 0.1154)"></span></div></div><a class="nav-btn close-btn" href="index.html" aria-label="Close card, back to N5 kanji"><span class="icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2L10 10M10 2L2 10" stroke="#310A3E" stroke-width="2" stroke-linecap="square"/></svg></span></a></div><article class="card">
 <header><button type="button" class="learn" data-kanji="中" aria-pressed="false" aria-label="Mark as learned" data-tip="Mark as learned"><svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="13.25"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="kanji" lang="ja">中</div>
 <div class="info"><span class="lv">N5</span><div class="meaning">in, inside, middle, mean, center</div>
 <div class="readings"><div class="rrow"><span class="rl">On</span><span class="rv"><span lang="ja">チュウ</span><span class="ro">chuu</span></span></div><div class="rrow"><span class="rl">Kun</span><span class="rv"><span lang="ja">なか</span><span class="ro">naka</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">うち</span><span class="ro">uchi</span></span></div><div class="rrow"><span class="rl"></span><span class="rv"><span lang="ja">あた.る</span><span class="ro">ataru</span></span></div></div></div></header>
+<section class="ai-box story" id="story" data-kanji="中" aria-labelledby="story-label"><div class="ai-head"><h2 class="ai-label" id="story-label">Memory story</h2><span class="ai-tag"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0c.4 2.6 1.4 3.6 5 5-3.6 1.4-4.6 2.4-5 5-.4-2.6-1.4-3.6-5-5 3.6-1.4 4.6-2.4 5-5z" fill="currentColor"/></svg>AI</span></div><p class="ai-text story-text" id="story-text" aria-live="polite">A line ｜ through a mouth 口: right in the <b>middle</b>.</p><div class="story-actions"><span class="story-prompt" id="story-prompt">Does this help you remember?</span><button type="button" class="round-btn story-keep" id="story-keep" aria-pressed="false" aria-label="Keep this story"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 7.2l2.4 2.4 4.6-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="round-btn story-next" id="story-next" aria-label="Show another story"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12.2 1.8v3h-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><script type="application/json" id="story-data">["A line ｜ through a mouth 口: right in the <b>middle<\/b>.", "The arrow ｜ hits the target 口 dead in the <b>middle<\/b>.", "A box 口 with a line ｜ through it: inside, in the <b>middle<\/b>."]</script></section>
 <div class="sections">
 <details class="sec"><summary><span class="sl"><span class="icon sec-chev" aria-hidden="true"><svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="chevron-down">
@@ -617,5 +643,31 @@ body.deck-page main { height:auto; display:block; padding:16px; }
       clip.play().catch(() => speak(b.dataset.say));
     } else speak(b.dataset.say);
   });
+})();
+
+(() => {
+  const box = document.getElementById("story");
+  if (!box) return;
+  const stories = JSON.parse(document.getElementById("story-data").textContent);
+  const key = "story:" + box.dataset.kanji;
+  const get = () => { try { const v = localStorage.getItem(key); return v === null ? null : +v; } catch { return null; } };
+  const set = v => { try { v === null ? localStorage.removeItem(key) : localStorage.setItem(key, v); } catch {} };
+  const text = document.getElementById("story-text"), prompt = document.getElementById("story-prompt");
+  const keep = document.getElementById("story-keep"), next = document.getElementById("story-next");
+  let kept = get(); if (!(kept >= 0 && kept < stories.length)) kept = null;
+  let idx = kept ?? 0, moved = false;
+  const render = () => {
+    const isKept = kept === idx;
+    text.innerHTML = stories[idx];
+    box.classList.toggle("kept", isKept);
+    keep.setAttribute("aria-pressed", isKept);
+    keep.setAttribute("aria-label", isKept ? "Don't keep this story" : "Keep this story");
+    next.hidden = isKept;
+    prompt.textContent = isKept ? "You kept this story"
+      : moved ? `Story ${idx + 1} of ${stories.length} · keep this one?` : "Does this help you remember?";
+  };
+  keep.addEventListener("click", () => { kept = kept === idx ? null : idx; set(kept); render(); });
+  next.addEventListener("click", () => { idx = (idx + 1) % stories.length; moved = true; render(); });
+  render();
 })();
 </script></body></html>

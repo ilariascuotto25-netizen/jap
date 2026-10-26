@@ -207,6 +207,7 @@ a.deck-card:focus-visible { outline:2px solid var(--brand); outline-offset:2px; 
 .dc-title { font-size:17px; font-weight:700; white-space:nowrap; }
 .dc-meta { font-size:13px; color:var(--muted); }
 .dc-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.dc-head:has(.ai-tag) { justify-content:flex-start; flex-wrap:nowrap; }
 .dc-tags { flex:none; display:flex; gap:6px; }
 .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; font-weight:700;
        line-height:1.5; letter-spacing:.02em; white-space:nowrap; }
@@ -294,6 +295,17 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .ad-btns { display:flex; gap:8px; margin-top:20px; }
 .ad-btns .q-btn { flex:1; width:auto; padding:0 12px; }
 .q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
+
+:root { --ai-tint:#f3e8ff; --ai:#8a2be2; --ai-ink:#5a1a9e; }
+@media (prefers-color-scheme: dark) { :root { --ai-tint:#2a1d44; --ai:#a66cf0; --ai-ink:#d9c2ff; } }
+.ai-tag { flex:none; display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 8px; border-radius:999px;
+          background:var(--ai); color:#fff; font-size:11px; font-weight:700; line-height:13px; letter-spacing:0; text-transform:none; }
+.ai-tag svg { width:10px; height:10px; }
+.ai-tag.off { opacity:.7; } /* coming soon: still purple, faded (its card is faded too) */
+.ai-box { display:flex; flex-direction:column; gap:8px; padding:14px; border-radius:14px; background:var(--ai-tint); text-align:left; }
+.ai-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.ai-label { margin:0; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--ai-ink); }
+.ai-text { margin:0; font-size:15px; line-height:1.5; color:var(--ink, #1d1b18); }
 </style></head>
 <body class="deck-page"><main>
 <header class="deck-head"><div class="deck-title"><a class="nav-btn back-btn" href="../index.html" aria-label="Back to all levels"><span class="icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M8.5 5H1.5M4.5 1.5L1 5L4.5 8.5" stroke="#310A3E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><h1>N5 JLPT</h1></div></header>
@@ -301,7 +313,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 <g id="icon/chevron-right">
 <path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
-</svg></span></a><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-glyph" lang="ja" aria-hidden="true">は</span><span class="dc-body"><span class="dc-title">Grammar</span><span class="dc-meta">Particles and sentence patterns</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">人間</span><span class="dc-body"><span class="dc-title">Vocabulary</span><span class="dc-meta">Words by topic</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">^_^</span><span class="dc-body"><span class="dc-title">Conversation</span><span class="dc-meta">Everyday phrases</span></span><span class="tag tag-soon">Coming soon</span></div></nav>
+</svg></span></a><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-glyph" lang="ja" aria-hidden="true">は</span><span class="dc-body"><span class="dc-head"><span class="dc-title">Grammar</span></span><span class="dc-meta">Particles and sentence patterns</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">人間</span><span class="dc-body"><span class="dc-head"><span class="dc-title">Vocabulary</span></span><span class="dc-meta">Words by topic</span></span><span class="tag tag-soon">Coming soon</span></div><div class="deck-card soon" aria-disabled="true"><span class="dc-level dc-level-small" lang="ja" aria-hidden="true">^_^</span><span class="dc-body"><span class="dc-head"><span class="dc-title">Conversation</span><span class="ai-tag off"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0c.4 2.6 1.4 3.6 5 5-3.6 1.4-4.6 2.4-5 5-.4-2.6-1.4-3.6-5-5 3.6-1.4 4.6-2.4 5-5z" fill="currentColor"/></svg>AI</span></span><span class="dc-meta">Role-play with an AI partner</span></span><span class="tag tag-soon">Coming soon</span></div></nav>
 </main><script type="application/json" id="level-data">{"level": "N5", "kanji": ["日", "一", "国", "人", "年", "大", "十", "二", "本", "中", "長", "出", "三", "時", "行", "見", "月", "後", "前", "生", "五", "間", "上", "東", "四", "今", "金", "九", "入", "学", "高", "円", "子", "外", "八", "六", "下", "来", "気", "小", "七", "山", "話", "女", "北", "午", "百", "書", "先", "名", "川", "千", "水", "半", "男", "西", "電", "校", "語", "土", "木", "聞", "食", "車", "何", "南", "万", "毎", "白", "天", "母", "火", "右", "読", "友", "左", "休", "父", "雨"]}</script><script>
 (() => {
   // Kanji card on a level page: progress (opened) and learned, as on the deck page
