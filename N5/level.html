@@ -106,15 +106,16 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .word-en { font-size:16px; color:var(--muted); }
 
 details.ph { align-self:stretch; margin-top:6px; border:2px solid var(--light-gray); }
-details.ph > summary { background:var(--light-gray); }
+details.ph > summary { background:var(--light-gray); padding:6px 12px; } /* smaller than Radicals, Vocabulary */
+details.ph > summary h2, details.ph > summary .count { font-size:10.5px; }
+details.ph > summary .sec-chev svg { width:8px; height:8px; }
 details.ph .none { margin:0; padding:12px 14px; }
-ul.phrases { list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:16px; }
-/* Phrase and translation on the left; the "i" button has its own column on the right, level with the
-   phrase's first line, so the translation never runs underneath it */
-ul.phrases li { display:grid; grid-template-columns:1fr auto; gap:2px 16px; }
-.ph-row { display:contents; }
-ul.phrases li .info-btn { grid-column:2; grid-row:1 / span 2; align-self:start; margin-top:1px; }
-ul.phrases li .ph-en { grid-column:1; }
+ul.phrases { list-style:none; margin:0; padding:6px 4px; display:flex; flex-direction:column; gap:4px; }
+/* A whole phrase is one button: tap it to open the phrase sheet (its words are tappable there) */
+.phrase-btn { display:flex; flex-direction:column; gap:2px; width:100%; padding:8px 10px; border:0; border-radius:12px;
+      background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; transition:background .12s; }
+.phrase-btn:hover, .phrase-btn:active { background:var(--read-tint); }
+.phrase-btn:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
 .ph-ja { font-size:16.8px; }
 .ph-en { font-size:14.4px; color:var(--muted); }
 
@@ -143,10 +144,12 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .sheet.is-phrase .sheet-word { margin-top:32px; font-size:26px; font-weight:500; line-height:2; }
 .sheet.is-phrase .sheet-word rt { font-size:12px; }
 .sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
-/* Phrase "i" button: opens the sheet with the whole phrase */
-.info-btn { flex:none; display:inline-flex; width:24px; height:24px; padding:0; border:0; background:none;
-            color:var(--brand); cursor:pointer; border-radius:50%; line-height:0; }
-.info-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+/* Words inside the phrase sheet: tap one to open it on its own; ← brings the phrase back */
+.sheet-word .w { line-height:inherit; }
+.sheet-hint { display:none; margin:-12px 0 20px; font-size:12px; color:var(--muted); }
+.sheet.is-phrase.has-words .sheet-hint { display:block; }
+.sheet-back { position:absolute; top:12px; left:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
+.sheet-back[hidden] { display:none; }
 .sheet .play { width:44px; height:44px; align-items:center; justify-content:center; background:var(--button); box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); }
 .sheet .play svg { width:20px; height:20px; }
 .play { display:none; padding:0; margin:0; border:0; background:none; cursor:pointer; line-height:0; border-radius:50%; }
