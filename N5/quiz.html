@@ -146,7 +146,7 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 .sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
 /* Words inside the phrase sheet: tap one to open it on its own; ← brings the phrase back */
 .sheet-word .w { line-height:inherit; }
-.sheet-hint { display:none; margin:-12px 0 20px; font-size:12px; color:var(--muted); }
+.sheet-hint { display:none; margin:16px 0 0; font-size:12px; color:var(--muted); } /* under ▶; the sheet keeps its 32px bottom padding */
 .sheet.is-phrase.has-words .sheet-hint { display:block; }
 .sheet-back { position:absolute; top:12px; left:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
 .sheet-back[hidden] { display:none; }
