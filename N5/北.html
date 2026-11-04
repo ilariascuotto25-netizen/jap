@@ -35,7 +35,7 @@ body.card-page .card { height:auto; overflow:visible; }
             box-shadow:0 -4px 16px rgba(26,20,77,.08); padding:12px 16px calc(12px + env(safe-area-inset-bottom)); }
 .deck-nav-in { max-width:560px; margin:0 auto; display:flex; align-items:center; gap:12px; }
 /* "Learned" toggle: a labelled pill between Back and Next. Off: plum outline, empty circle,
-   "Mark as learned". On: plum fill, mint check (as in the toast), "Learned". */
+   "Mark as learned". On: plum fill, mint check, "Learned". */
 .learn { position:relative; flex:1; min-width:0; height:44px; display:inline-flex; align-items:center; justify-content:center;
          gap:8px; padding:0 16px 0 12px; border:0; border-radius:999px; background:var(--card); color:var(--brand);
          box-shadow:inset 0 0 0 1.5px var(--brand); font:inherit; font-size:15px; font-weight:600; line-height:1;
@@ -62,17 +62,10 @@ body.card-page .card { height:auto; overflow:visible; }
 .vc, .vempty { display:none; }
 .vempty { margin:0; padding:12px 0 16px; }
 /* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
-   (the Learned check shows a short message instead, see .toast) */
+   (the Learned pill's own label and colour say what happened) */
 @media (hover: none) {
   .learn::after, .continue-btn::after, .quiz-btn::after, .transfer-btn::after { display:none; }
 }
-.toast { position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); /* inside the card, 16px above its edge */ z-index:10; display:flex; align-items:center; gap:8px;
-         padding:10px 16px 10px 14px; border-radius:999px; background:var(--pick); color:var(--pick-ink); font-size:14px; font-weight:700;
-         white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); transform:translate(-50%, 8px); opacity:0;
-         transition:opacity .2s, transform .2s; pointer-events:none; }
-.toast.on { opacity:1; transform:translate(-50%, 0); }
-.toast .learn-bg { fill:var(--learn-on); }
-.toast .ring { fill:none; stroke:currentColor; stroke-opacity:.6; stroke-width:2; }
 .kanji { font-size:96px; line-height:1; font-weight:500; }
 .info { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding-top:4px; }
 .meaning { font-size:18px; line-height:1.4; font-weight:700; }
@@ -481,14 +474,6 @@ body.deck-page main { height:auto; display:block; padding:16px; }
   const key = k => "learned:" + k;
   const read = k => { try { return localStorage.getItem(key(k)) === "1"; } catch { return false; } };
   const write = (k, on) => { try { on ? localStorage.setItem(key(k), "1") : localStorage.removeItem(key(k)); } catch {} };
-  let box = null, timer = 0;
-  const toast = on => {
-    if (!box) { box = document.createElement("div"); box.className = "toast"; box.setAttribute("role", "status"); document.body.appendChild(box); }
-    box.innerHTML = (on ? '<svg width="18" height="18" viewBox="0 0 28 28" aria-hidden="true"><circle class="learn-bg" cx="14" cy="14" r="14"/><path d="M8.5 14.5l3.5 3.5 7.5-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-                       : '<svg width="18" height="18" viewBox="0 0 28 28" aria-hidden="true"><circle class="ring" cx="14" cy="14" r="13"/></svg>')
-                  + (on ? "Marked as learned" : "Removed from learned");
-    box.classList.add("on"); clearTimeout(timer); timer = setTimeout(() => box.classList.remove("on"), 2000);
-  };
   const show = (b, on) => {
     b.setAttribute("aria-pressed", on);
     b.dataset.tip = on ? "Mark as not learned" : "Mark as learned";
@@ -499,7 +484,6 @@ body.deck-page main { height:auto; display:block; padding:16px; }
     b.addEventListener("click", () => {
       const on = b.getAttribute("aria-pressed") !== "true";
       write(b.dataset.kanji, on); show(b, on);
-      if (matchMedia("(hover: none)").matches) toast(on);  // touch: no tooltip, so say what happened
     });
   }
 })();
