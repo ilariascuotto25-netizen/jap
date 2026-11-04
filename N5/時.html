@@ -63,6 +63,38 @@ body.card-page .card { height:auto; overflow:visible; }
 .see-all[hidden] { display:none; }
 .vc, .vempty { display:none; }
 .vempty { margin:0; padding:12px 0 16px; }
+/* Navigation. Phones: swipe the card left/right; the edges of the neighbouring cards peek in, and a
+   one-time hint above the bar explains it. Desktop: ← → change card, L toggles Learned, Esc closes a
+   sheet; a "Shortcuts" button opens the legend, which also opens by itself the first time. */
+body.card-page main { overflow-x:clip; }
+.swipe-hint, .kbd-btn, .kbd-legend { display:none; }
+@media (hover: none) and (pointer: coarse) {
+  body.card-page .card { touch-action:pan-y; }
+  body.card-page.has-prev main::before, body.card-page.has-next main::after {
+    content:""; position:fixed; top:120px; bottom:calc(110px + env(safe-area-inset-bottom)); width:6px; background:var(--line); }
+  body.card-page.has-prev main::before { left:4px; border-radius:0 6px 6px 0; }
+  body.card-page.has-next main::after { right:4px; border-radius:6px 0 0 6px; }
+  .swipe-hint:not([hidden]) { position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:6;
+    display:flex; align-items:center; gap:6px; padding:4px 4px 4px 12px; border-radius:999px; background:var(--pick); color:var(--pick-ink);
+    font-size:14px; font-weight:700; white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); }
+}
+.swipe-hint svg { flex:none; }
+.swipe-hint button { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border:0;
+                     border-radius:50%; background:none; color:inherit; cursor:pointer; }
+@media (hover: hover) {
+  .kbd-btn { position:fixed; right:16px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:6; display:inline-flex; align-items:center; gap:6px;
+             height:32px; padding:0 12px; border:0; border-radius:999px; background:var(--button); color:var(--brand);
+             box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  .kbd-btn:hover { background:var(--brand-soft); }
+  .kbd-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+  .kbd-legend:not([hidden]) { position:fixed; right:16px; bottom:calc(126px + env(safe-area-inset-bottom)); z-index:6; display:block; width:260px;
+                              padding:14px 16px; border-radius:14px; background:var(--card); box-shadow:var(--shadow), inset 0 0 0 1px var(--line); }
+}
+.kbd-legend h2 { margin-bottom:4px; }
+.kbd-row { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:14px; }
+.kbd-row span { margin-left:4px; }
+kbd { min-width:24px; height:24px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px;
+      box-shadow:inset 0 0 0 1px var(--hover-line); color:var(--brand); font:700 12px/1 -apple-system,system-ui,sans-serif; }
 /* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
    (the Learned pill's own label and colour say what happened) */
 @media (hover: none) {
@@ -538,6 +570,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 <path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
 </svg></span></a></div></nav>
+<div class="swipe-hint" id="swipe-hint" hidden><span style="transform:scaleX(-1);display:inline-flex"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Swipe to change card<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><button type="button" aria-label="Close the swipe hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><button type="button" class="kbd-btn" id="kbd-btn" aria-expanded="false" aria-controls="kbd-legend"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 6.5h1M7.5 6.5h1M11 6.5h1M5 9.5h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Shortcuts</button><div class="kbd-legend" id="kbd-legend" role="region" aria-label="Keyboard shortcuts" hidden><h2>Keyboard</h2><div class="kbd-row"><kbd>←</kbd><kbd>→</kbd><span>Previous / next card</span></div><div class="kbd-row"><kbd>L</kbd><span>Mark as learned</span></div><div class="kbd-row"><kbd>Esc</kbd><span>Close a slide-up</span></div></div>
 </main>
 <dialog class="sheet" id="word-sheet" aria-labelledby="sheet-word"><div class="sheet-body" tabindex="-1" autofocus>
 <span class="sheet-handle" aria-hidden="true"></span>
@@ -642,6 +675,65 @@ body.deck-page main { height:auto; display:block; padding:16px; }
       write(b.dataset.kanji, on); show(b, on);
     });
   }
+})();
+(() => {
+  // Changing card without the buttons: swipe on phones, keys on desktop
+  const body = document.body, card = document.querySelector(".card");
+  if (!body.classList.contains("card-page") || !card) return;
+  const prev = document.querySelector("a.nav-back"), next = document.querySelector("a.nav-next");
+  body.classList.toggle("has-prev", !!prev); body.classList.toggle("has-next", !!next);
+  const get = k => { try { return localStorage.getItem(k); } catch { return null; } };
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  const go = link => { if (link) location.href = link.href; };
+
+  // Keyboard (desktop)
+  const btn = document.getElementById("kbd-btn"), legend = document.getElementById("kbd-legend");
+  const showLegend = on => { legend.hidden = !on; btn.setAttribute("aria-expanded", on); };
+  btn.addEventListener("click", e => { e.stopPropagation(); showLegend(legend.hidden); });
+  document.addEventListener("click", e => { if (!legend.hidden && !legend.contains(e.target)) showLegend(false); });
+  if (get("keys:seen") === "next") { put("keys:seen", "1"); showLegend(true); }  // first key moved card: show it here
+  document.addEventListener("keydown", e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === "Escape" && !legend.hidden) { showLegend(false); return; }
+    if (document.querySelector("dialog[open]")) return;            // a sheet handles its own keys (Esc closes it)
+    if (e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
+    const link = e.key === "ArrowLeft" ? prev : e.key === "ArrowRight" ? next : null;
+    const learn = e.key === "l" || e.key === "L";
+    if (!link && !learn) return;
+    e.preventDefault();
+    const first = !get("keys:seen");
+    if (learn) { document.querySelector(".learn").click(); if (first) { put("keys:seen", "1"); showLegend(true); } }
+    else { if (first) put("keys:seen", "next"); go(link); }
+  });
+
+  // Swipe (phones): the card follows the finger; past 70px it slides out and the next card opens
+  const hint = document.getElementById("swipe-hint");
+  const touch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const hideHint = () => { hint.hidden = true; put("swipehint:closed", "1"); };
+  if (touch && (prev || next) && !get("swipehint:closed")) hint.hidden = false;
+  hint.querySelector("button").addEventListener("click", hideHint);
+  let x0 = 0, y0 = 0, dx = 0, mode = null;
+  const reset = () => { card.style.transition = "transform .2s ease-out"; card.style.transform = ""; mode = null; };
+  card.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) { mode = "y"; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = 0; mode = null; card.style.transition = "none";
+  }, { passive: true });
+  card.addEventListener("touchmove", e => {
+    if (mode === "y") return;
+    const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+    if (!mode) { if (Math.abs(mx) < 10 && Math.abs(my) < 10) return; mode = Math.abs(mx) > Math.abs(my) ? "x" : "y"; if (mode === "y") return; }
+    dx = (mx < 0 ? next : prev) ? mx : mx / 4;   // no card that way: it resists
+    card.style.transform = `translateX(${dx}px)`;
+  }, { passive: true });
+  card.addEventListener("touchend", () => {
+    if (mode !== "x") { mode = null; return; }
+    const target = dx < 0 ? next : prev;
+    if (!target || Math.abs(dx) < 70) return reset();
+    card.style.transition = "transform .18s ease-in"; card.style.transform = `translateX(${dx < 0 ? -110 : 110}vw)`;
+    hideHint(); setTimeout(() => go(target), 160);
+  });
+  card.addEventListener("touchcancel", reset);
+  window.addEventListener("pageshow", () => { card.style.transition = "none"; card.style.transform = ""; });  // back button
 })();
 (() => {
   // Long word lists: the picked level shows 5 words, then "See all N words". Picking another level

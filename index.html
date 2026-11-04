@@ -63,6 +63,38 @@ body.card-page .card { height:auto; overflow:visible; }
 .see-all[hidden] { display:none; }
 .vc, .vempty { display:none; }
 .vempty { margin:0; padding:12px 0 16px; }
+/* Navigation. Phones: swipe the card left/right; the edges of the neighbouring cards peek in, and a
+   one-time hint above the bar explains it. Desktop: ← → change card, L toggles Learned, Esc closes a
+   sheet; a "Shortcuts" button opens the legend, which also opens by itself the first time. */
+body.card-page main { overflow-x:clip; }
+.swipe-hint, .kbd-btn, .kbd-legend { display:none; }
+@media (hover: none) and (pointer: coarse) {
+  body.card-page .card { touch-action:pan-y; }
+  body.card-page.has-prev main::before, body.card-page.has-next main::after {
+    content:""; position:fixed; top:120px; bottom:calc(110px + env(safe-area-inset-bottom)); width:6px; background:var(--line); }
+  body.card-page.has-prev main::before { left:4px; border-radius:0 6px 6px 0; }
+  body.card-page.has-next main::after { right:4px; border-radius:6px 0 0 6px; }
+  .swipe-hint:not([hidden]) { position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:6;
+    display:flex; align-items:center; gap:6px; padding:4px 4px 4px 12px; border-radius:999px; background:var(--pick); color:var(--pick-ink);
+    font-size:14px; font-weight:700; white-space:nowrap; box-shadow:0 4px 16px rgba(26,20,77,.18); }
+}
+.swipe-hint svg { flex:none; }
+.swipe-hint button { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border:0;
+                     border-radius:50%; background:none; color:inherit; cursor:pointer; }
+@media (hover: hover) {
+  .kbd-btn { position:fixed; right:16px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:6; display:inline-flex; align-items:center; gap:6px;
+             height:32px; padding:0 12px; border:0; border-radius:999px; background:var(--button); color:var(--brand);
+             box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  .kbd-btn:hover { background:var(--brand-soft); }
+  .kbd-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+  .kbd-legend:not([hidden]) { position:fixed; right:16px; bottom:calc(126px + env(safe-area-inset-bottom)); z-index:6; display:block; width:260px;
+                              padding:14px 16px; border-radius:14px; background:var(--card); box-shadow:var(--shadow), inset 0 0 0 1px var(--line); }
+}
+.kbd-legend h2 { margin-bottom:4px; }
+.kbd-row { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:14px; }
+.kbd-row span { margin-left:4px; }
+kbd { min-width:24px; height:24px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px;
+      box-shadow:inset 0 0 0 1px var(--hover-line); color:var(--brand); font:700 12px/1 -apple-system,system-ui,sans-serif; }
 /* Touch screens have no hover: a tap would leave the tooltip stuck, so they get none
    (the Learned pill's own label and colour say what happened) */
 @media (hover: none) {
