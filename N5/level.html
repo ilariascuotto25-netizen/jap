@@ -5,12 +5,14 @@
 :root { --bg:#f9f7fd; --card:#fff; --ink:#1d1b18; --muted:#6b665e; --line:#eae6f7;
         --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
-        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f; }
+        --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f;
+        --verb-tint:#ddf3e7; --particle-tint:#fde8cc; --verb-press:#c4ead5; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
-          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#3f8a57; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f; } }
+          --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#2f7346; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f;
+          --verb-tint:#1f3d31; --particle-tint:#45321b; --verb-press:#2a5341; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -117,10 +119,17 @@ h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.
 .wr { display:flex; align-items:center; gap:8px; padding-bottom:3px; font-size:16px; }
 .word-en { font-size:16px; color:var(--muted); }
 
-details.ph { align-self:stretch; margin-top:6px; border:2px solid var(--light-gray); }
-details.ph > summary { background:var(--light-gray); padding:6px 12px; } /* smaller than Radicals, Vocabulary */
-details.ph > summary h2, details.ph > summary .count { font-size:10.5px; }
-details.ph > summary .sec-chev svg { width:8px; height:8px; }
+/* Phrases header: looks 32px tall (under the Radicals / Vocabulary headers) with an invisible
+   44px hit area reaching 6px above and below; keep 6px clear above it */
+details.ph { align-self:stretch; margin-top:6px; border:1px solid var(--line); overflow:visible; transition:border-color .12s; }
+details.ph > summary { position:relative; height:32px; padding:0 12px; background:var(--read-tint); border-radius:11px; transition:background .12s; }
+details.ph[open] > summary { border-radius:11px 11px 0 0; }
+details.ph > summary::before { content:""; position:absolute; left:0; right:0; top:-6px; bottom:-6px; }
+details.ph:has(> summary:hover) { border-color:var(--hover-line); }
+details.ph > summary:active { background:var(--brand-soft); }
+details.ph > summary:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+details.ph > summary h2, details.ph > summary .count { font-size:12px; }
+details.ph > summary .sec-chev svg { width:10px; height:10px; }
 details.ph .none { margin:0; padding:12px 14px; }
 ul.phrases { list-style:none; margin:0; padding:6px 4px; display:flex; flex-direction:column; gap:4px; }
 /* A whole phrase is one button: tap it to open the phrase sheet (its words are tappable there) */
@@ -136,8 +145,11 @@ ul.phrases { list-style:none; margin:0; padding:6px 4px; display:flex; flex-dire
      cursor:pointer; transition:background .12s; }
 .w:hover { background:var(--brand-soft); }
 .w:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
-.pt { color:var(--particle); } /* particles in phrases: は, が, を, に… */
-.vb { color:var(--verb); } /* whole verb expressions in phrases: 入学した, ありません, です… */
+/* Grammar colour: ink text on a soft tint. Green = whole verb expressions (入学した, です…),
+   orange = particles (は, が, を…). The tint only means grammar; tappable words have their own signal. */
+.pt, .vb { color:var(--ink); border-radius:4px; padding:0 2px; -webkit-box-decoration-break:clone; box-decoration-break:clone; }
+.pt { background:var(--particle-tint); }
+.vb { background:var(--verb-tint); }
 .w.word-ja { font-size:22.4px; font-weight:700; line-height:1.3; } /* headwords keep their size as buttons */
 /* Bottom sheet: slides up from the bottom; closes with ×, Esc or a tap outside */
 dialog.sheet { position:fixed; inset:auto 0 0 0; margin:0 auto; padding:0; width:100%; max-width:592px; max-height:85vh;
@@ -155,9 +167,32 @@ dialog.sheet::backdrop { background:rgba(26,20,77,.35); }
 /* A whole phrase: smaller than a single word so a sentence fits in a few lines */
 .sheet.is-phrase .sheet-word { margin-top:32px; font-size:26px; font-weight:500; line-height:2; }
 .sheet.is-phrase .sheet-word rt { font-size:12px; }
-.sheet-word .vb rt { color:inherit; } /* a coloured verb keeps its colour in the furigana too */
-/* Words inside the phrase sheet: tap one to open it on its own; ← brings the phrase back */
-.sheet-word .w { line-height:inherit; }
+/* Words inside the phrase sheet: tap one to open it on its own; ← brings the phrase back.
+   Each word is one block, so a tint covers its furigana too. Tappable words: dotted lavender
+   underline. Pressed: the tint one step darker (lilac on plain words), only while touching. */
+.sheet.is-phrase .sheet-word .vb, .sheet.is-phrase .sheet-word .pt, .sheet.is-phrase .sheet-word .w { display:inline-block; line-height:1.9; padding:0 3px; margin:0 1px; border-radius:6px; }
+.sheet-word .w { line-height:inherit; border-bottom:2px dotted var(--hover-strong); border-radius:6px 6px 0 0; }
+.sheet-word .w:hover, .sheet-word .w:active { background:var(--brand-soft); }
+.sheet-word .w.vb:hover, .sheet-word .w.vb:active { background:var(--verb-press); }
+/* Word opened from a phrase: the phrase on one line, the chosen word in plum bold */
+.sheet-ctx { margin:14px 48px 0; font-size:14px; color:var(--muted); }
+.sheet-ctx b { color:var(--brand); font-weight:700; }
+.sheet-ctx[hidden] { display:none; }
+.sheet-ctx:not([hidden]) ~ .sheet-word { margin-top:12px; }
+/* One-time colour key: on the card (first Phrases opened) and on the first phrase sheet; × hides both */
+.ckey { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; width:fit-content; padding:4px 4px 4px 12px; border-radius:10px;
+        background:var(--read-tint); font-size:13px; font-weight:700; color:var(--ink); }
+.ckey[hidden] { display:none; }
+.ckey .ck { padding:1px 6px; }
+.ck-ul { border-bottom:2px dotted var(--hover-strong); }
+.ck-x { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border:0;
+        border-radius:50%; background:none; cursor:pointer; }
+.ck-x:hover { background:var(--brand-soft); }
+.ck-x:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+details.ph .ckey { margin:10px 10px 0; }
+details.ph .ckey .ck-ul { display:none; } /* no underlines on the card */
+.sheet .ckey { margin:40px auto 0; } /* clears the × and ← buttons */
+.sheet .ckey:not([hidden]) ~ .sheet-word { margin-top:16px; }
 .sheet-hint { display:none; margin:16px 0 0; font-size:12px; color:var(--muted); } /* under ▶; the sheet keeps its 32px bottom padding */
 .sheet.is-phrase.has-words .sheet-hint { display:block; }
 .sheet-back { position:absolute; top:12px; left:12px; border:0; box-shadow:inset 0 0 0 1px var(--line), var(--soft-shadow); background:var(--button); cursor:pointer; }
@@ -308,7 +343,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .q-btn:focus-visible, .type-opt:has(input:focus-visible) { outline:2px solid var(--brand); outline-offset:2px; }
 
 :root { --ai-tint:#f3e8ff; --ai:#8a2be2; --ai-ink:#5a1a9e; }
-@media (prefers-color-scheme: dark) { :root { --ai-tint:#2a1d44; --ai:#a66cf0; --ai-ink:#d9c2ff; } }
+@media (prefers-color-scheme: dark) { :root { --ai-tint:#2a1d44; --ai:#8b4fe0; --ai-ink:#d9c2ff; } }
 .ai-tag { flex:none; display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 8px; border-radius:999px;
           background:var(--ai); color:#fff; font-size:11px; font-weight:700; line-height:13px; letter-spacing:0; text-transform:none; }
 .ai-tag svg { width:10px; height:10px; }
