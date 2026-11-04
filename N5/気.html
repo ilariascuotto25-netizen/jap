@@ -6,13 +6,13 @@
         --brand:#310a3e; --brand-soft:#eae6f7; --tag:#eee9f0; --tag-ink:#6b665e; --unrated:#9a948a;
         --pick:#310a3e; --pick-ink:#fff; --button:#fff; --switch:#fff; --switch-hover:#eae6f7; --shadow:0 4px 24px rgba(26,20,77,.12); --soft-shadow:0 1px 2px rgba(49,10,62,.06), 0 2px 8px rgba(49,10,62,.06);
         --learn-off:#f7f7f7; --learn-off-hover:#ececec; --light-gray:#f7f7f7; --learn-on:#9bd8a8; --learn-ink:#1d5631; --read-tint:#f5f3fc; --hover-line:#bba6ee; --hover-strong:#8f72dc; --particle:#e58900; --verb:#16aa6f;
-        --verb-tint:#ddf3e7; --particle-tint:#fde8cc; --verb-press:#c4ead5; --opened-tint:#fcfbff; }
+        --verb-tint:#ddf3e7; --particle-tint:#fde8cc; --verb-press:#c4ead5; }
 @media (prefers-color-scheme: dark) {
   :root { --bg:#14122a; --card:#1e1b33; --ink:#ece8f5; --muted:#a8a3b8; --line:#2f2a4d;
           --brand:#e2c6ec; --brand-soft:#2f2a4d; --tag:#2c2a3a; --tag-ink:#c4bfd0; --unrated:#8a8698;
           --pick:#e2c6ec; --pick-ink:#2a0d33; --button:#2c2a3a; --switch:#2c2a3a; --switch-hover:#3a3750; --shadow:0 4px 24px rgba(0,0,0,.4); --soft-shadow:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25);
           --learn-off:#2c2a3a; --learn-off-hover:#3a3750; --light-gray:#2c2a3a; --learn-on:#2f7346; --learn-ink:#eaf7ee; --read-tint:#25213f; --hover-line:#6f5fa8; --hover-strong:#a58ef0; --particle:#e58900; --verb:#16aa6f;
-          --verb-tint:#1f3d31; --particle-tint:#45321b; --verb-press:#2a5341; --opened-tint:#25213f; } }
+          --verb-tint:#1f3d31; --particle-tint:#45321b; --verb-press:#2a5341; } }
 * { box-sizing:border-box; }
 html, body { height:100%; }
 body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
@@ -89,18 +89,6 @@ body.card-page main { overflow-x:clip; }
   .kbd-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
   .kbd-legend:not([hidden]) { position:fixed; right:16px; bottom:calc(126px + env(safe-area-inset-bottom)); z-index:6; display:block; width:260px;
                               padding:14px 16px; border-radius:14px; background:var(--card); box-shadow:var(--shadow), inset 0 0 0 1px var(--line); }
-}
-/* Desktop (wider than 640px): no pinned bar. Back, Learned and Next sit under the card, like the
-   deck page's Continue and Quiz; the Shortcuts button is centred under them and opens its legend below. */
-@media (min-width: 641px) {
-  body.card-page main { padding-bottom:40px; }
-  .deck-nav { position:static; background:none; border:0; box-shadow:none; padding:16px 0 0; }
-  .deck-nav-in { max-width:none; }
-}
-@media (hover: hover) and (min-width: 641px) {
-  .kbd-wrap { position:relative; align-self:center; margin-top:16px; }
-  .kbd-btn { position:static; }
-  .kbd-legend:not([hidden]) { position:absolute; right:auto; left:50%; top:calc(100% + 8px); bottom:auto; transform:translateX(-50%); }
 }
 .kbd-legend h2 { margin-bottom:4px; }
 .kbd-row { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:14px; }
@@ -359,8 +347,8 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 .row-check { flex:none; line-height:0; visibility:hidden; }
 .row-check .learn-bg { fill:var(--learn-on); }
 .row.learned .row-check { visibility:visible; }
-/* Read = opened at least once: a very light lilac, lighter than the page background, in both views */
-.row.read, .tile.read { background:var(--opened-tint); }
+/* Read = opened at least once: a faint lavender tint, in both views */
+.row.read, .tile.read { background:var(--read-tint); }
 /* Hover: mid-lavender border, between light accent and the Dark accent "last opened" outline */
 .row:not(.current):hover, .tile:not(.current):hover { border-color:var(--hover-line); box-shadow:inset 0 0 0 1px var(--hover-line); }
 .deck-list[hidden], .deck-grid[hidden] { display:none; }
@@ -646,7 +634,7 @@ body.deck-page main { height:auto; display:block; padding:16px; }
 <path id="Vector" d="M3.5 1.5L7 5L3.5 8.5" stroke-width="2" stroke-linecap="square" stroke="#261C76"/>
 </g>
 </svg></span></a></div></nav>
-<div class="swipe-hint" id="swipe-hint" hidden><span style="transform:scaleX(-1);display:inline-flex"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Swipe to change card<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><button type="button" aria-label="Close the swipe hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><div class="kbd-wrap"><button type="button" class="kbd-btn" id="kbd-btn" aria-expanded="false" aria-controls="kbd-legend"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 6.5h1M7.5 6.5h1M11 6.5h1M5 9.5h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Shortcuts</button><div class="kbd-legend" id="kbd-legend" role="region" aria-label="Keyboard shortcuts" hidden><h2>Keyboard</h2><div class="kbd-row"><kbd>←</kbd><kbd>→</kbd><span>Previous / next card</span></div><div class="kbd-row"><kbd>L</kbd><span>Mark as learned</span></div><div class="kbd-row"><kbd>Esc</kbd><span>Close a slide-up</span></div></div></div>
+<div class="swipe-hint" id="swipe-hint" hidden><span style="transform:scaleX(-1);display:inline-flex"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Swipe to change card<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><button type="button" aria-label="Close the swipe hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><button type="button" class="kbd-btn" id="kbd-btn" aria-expanded="false" aria-controls="kbd-legend"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 6.5h1M7.5 6.5h1M11 6.5h1M5 9.5h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Shortcuts</button><div class="kbd-legend" id="kbd-legend" role="region" aria-label="Keyboard shortcuts" hidden><h2>Keyboard</h2><div class="kbd-row"><kbd>←</kbd><kbd>→</kbd><span>Previous / next card</span></div><div class="kbd-row"><kbd>L</kbd><span>Mark as learned</span></div><div class="kbd-row"><kbd>Esc</kbd><span>Close a slide-up</span></div></div>
 </main>
 <dialog class="sheet" id="word-sheet" aria-labelledby="sheet-word"><div class="sheet-body" tabindex="-1" autofocus>
 <span class="sheet-handle" aria-hidden="true"></span>
